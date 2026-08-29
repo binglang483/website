@@ -60,7 +60,7 @@
         >
           <div class="flex items-start gap-3">
             <div class="w-10 h-10 rounded-lg flex items-center justify-center text-xl flex-shrink-0"
-                 :style="{ background: getDomainBg(d.domain) }">📄</div>
+                 :style="{ background: getBgColor(d.domain) }">📄</div>
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 mb-1 flex-wrap">
                 <span class="text-xs px-1.5 py-0.5 rounded" style="background:#fff1f1;color:#dd3333">{{ d.domain }}</span>
@@ -93,17 +93,11 @@
 
 <script setup lang="ts">
 const route = useRoute()
+const { getBgColor } = useDomains()
 const user = ref<any>(null)
 const docs = ref<any[]>([])
 const stats = ref({ total: 0, public_count: 0, total_views: 0 })
 const loading = ref(true)
-
-const bgMap: Record<string, string> = {
-  '安全': '#fff1f1', '开发': '#e8f4ff', '设计': '#f3e8ff', '理学': '#ecfdf5',
-  '工学': '#fff7ed', '医学': '#fdf2f8', '交叉新兴': '#eef2ff', '外语': '#ecfeff',
-  '经济学': '#fefce8', '管理学': '#f0fdfa', '职业技能': '#f9fafb', '通识': '#fffbeb'
-}
-function getDomainBg(d: string) { return bgMap[d] || '#f3f4f6' }
 
 onMounted(async () => {
   const id = route.params.id as string

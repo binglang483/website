@@ -109,6 +109,13 @@ html, body {
   .tag-orange {
     @apply tag bg-orange-50 text-orange-600;
   }
+  /* 页面中直接使用的 tag 变体 */
+  .tag-sakura {
+    @apply tag bg-pink-50 text-[#dd3333];
+  }
+  .tag-anime {
+    @apply tag bg-purple-50 text-purple-600;
+  }
 
   .gradient-text {
     background: linear-gradient(135deg, #f472b6 0%, #a855f7 100%);

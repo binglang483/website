@@ -15,8 +15,6 @@
             <NuxtLink to="/" class="nav-link" active-class="nav-link-active">🏠 首页</NuxtLink>
             <NuxtLink to="/docs" class="nav-link" active-class="nav-link-active">📖 文档</NuxtLink>
             <NuxtLink to="/notes" class="nav-link" active-class="nav-link-active">📓 笔记</NuxtLink>
-            <NuxtLink to="/blog" class="nav-link" active-class="nav-link-active">📝 博客</NuxtLink>
-            <NuxtLink to="/knowledge" class="nav-link" active-class="nav-link-active">📚 知识库</NuxtLink>
             <NuxtLink to="/about" class="nav-link" active-class="nav-link-active">💡 关于</NuxtLink>
           </nav>
 
@@ -28,7 +26,7 @@
               <input
                 v-model="searchQuery"
                 type="text"
-                placeholder="搜索文章..."
+                placeholder="搜索文档..."
                 class="w-52 h-9 px-4 pl-9 rounded-lg border border-gray-200 text-sm bg-white outline-none focus:border-[#dd3333] transition"
                 @keyup.enter="doSearch"
               />
@@ -42,7 +40,7 @@
           <!-- 用户区 -->
           <div class="flex items-center gap-2 ml-2">
             <template v-if="userStore.isLoggedIn">
-              <NuxtLink to="/blog/create" class="h-9 px-3 rounded-lg flex items-center gap-1 text-xs text-white" style="background:linear-gradient(135deg,#f472b6,#a855f7)">✍️ 写文章</NuxtLink>
+              <NuxtLink to="/notes/new" class="h-9 px-3 rounded-lg flex items-center gap-1 text-xs text-white" style="background:linear-gradient(135deg,#f472b6,#a855f7)">✍️ 写笔记</NuxtLink>
               <div class="relative group">
                 <button class="w-9 h-9 rounded-lg bg-gradient-to-br from-sakura-400 to-purple-500 text-white flex items-center justify-center text-sm font-medium hover:ring-2 ring-sakura-300 transition">
                   {{ userStore.user?.nickname?.[0] || userStore.user?.username?.[0] || 'U' }}
@@ -87,6 +85,9 @@
     <footer class="mt-auto py-5 text-center text-sm text-gray-400">
       <p>🌸 学びの庭 · Made with 💖 | Nuxt 3 + SQLite</p>
     </footer>
+
+    <!-- Toast 容器（全局提示） -->
+    <ToastContainer />
   </div>
 </template>
 
@@ -96,7 +97,7 @@ const searchQuery = ref('')
 
 function doSearch() {
   if (searchQuery.value.trim()) {
-    navigateTo(`/blog?q=${encodeURIComponent(searchQuery.value.trim())}`)
+    navigateTo(`/docs?q=${encodeURIComponent(searchQuery.value.trim())}`)
   }
 }
 </script>

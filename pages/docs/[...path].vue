@@ -29,9 +29,7 @@
         <article class="card p-6 md:p-8">
           <!-- 面包屑 -->
           <div class="flex items-center gap-1 text-xs text-gray-400 mb-4">
-            <NuxtLink to="/knowledge" class="hover:text-[#dd3333]">知识库</NuxtLink>
-            <span>/</span>
-            <NuxtLink to="/docs" class="hover:text-[#dd3333]">文档</NuxtLink>
+            <NuxtLink to="/docs" class="hover:text-[#dd3333]">📖 文档</NuxtLink>
             <template v-for="(seg, i) in pathSegments" :key="i">
               <span>/</span>
               <span class="text-gray-600">{{ seg }}</span>
@@ -91,6 +89,9 @@
             <span class="ml-auto">{{ doc.content?.split('\n').length }} 行 · {{ doc.content?.length }} 字符</span>
           </div>
         </article>
+
+        <!-- ========== 评论区 ========== -->
+        <CommentSection v-if="doc?.id" type="document" :target-id="doc.id" />
       </template>
 
       <!-- ========== 编辑模式 ========== -->

@@ -25,7 +25,76 @@ export function getDb(): Database.Database {
   return db
 }
 
+/** 安全地给表加列（列已存在则跳过） */
+function ensureColumn(db: Database.Database, table: string, column: string, def: string) {
+  const cols = db.pragma(`table_info(${table})`) as { name: string }[]
+  const exists = cols.some(c => c.name === column)
+  if (!exists) {
+    db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${def}`)
+    console.log(`  [migration] 给 ${table} 增加列 ${column}`)
+  }
+}
+
+/** 迁移旧 comments 表（如果存在旧结构） */
+function migrateCommentsTable(db: Database.Database) {
+  // 检查表是否存在
+  const tableExists = db.prepare(
+    "SELECT name FROM sqlite_master WHERE type='table' AND name='comments'"
+  ).get()
+
+  if (!tableExists) return // 新数据库，不需要迁移
+
+  // 检查是否是旧结构（有 article_id 但没 commentable_type）
+  const cols = db.pragma('table_info(comments)') as { name: string }[]
+  const hasOldArticleId = cols.some(c => c.name === 'article_id')
+  const hasNewType = cols.some(c => c.name === 'commentable_type')
+
+  if (hasOldArticleId && !hasNewType) {
+    console.log('[migration] 检测到旧版 comments 表结构，开始迁移...')
+
+    // 1. 重命名旧表
+    db.exec('ALTER TABLE comments RENAME TO comments_old')
+
+    // 2. 创建新表
+    db.exec(`
+      CREATE TABLE comments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        commentable_type TEXT NOT NULL,
+        commentable_id INTEGER NOT NULL,
+        user_id INTEGER NOT NULL,
+        parent_id INTEGER,
+        content TEXT NOT NULL,
+        status INTEGER DEFAULT 1,
+        created_at TEXT DEFAULT (datetime('now','localtime')),
+        FOREIGN KEY (user_id) REFERENCES users(id),
+        FOREIGN KEY (parent_id) REFERENCES comments(id)
+      )
+    `)
+
+    // 3. 迁移数据（旧数据关联的是 articles 表）
+    db.exec(`
+      INSERT INTO comments (id, commentable_type, commentable_id, user_id, parent_id, content, status, created_at)
+      SELECT id, 'article', article_id, user_id, parent_id, content, status, created_at
+      FROM comments_old
+    `)
+
+    // 4. 删除旧表
+    db.exec('DROP TABLE comments_old')
+
+    // 5. 重建索引
+    db.exec(`
+      CREATE INDEX IF NOT EXISTS idx_comments_polymorphic ON comments(commentable_type, commentable_id);
+      CREATE INDEX IF NOT EXISTS idx_comments_parent ON comments(parent_id);
+    `)
+
+    console.log('[migration] comments 表迁移完成 ✅')
+  }
+}
+
 function initSchema(db: Database.Database) {
+  // ========== 迁移旧 comments 表 ==========
+  migrateCommentsTable(db)
+
   db.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -58,15 +127,16 @@ function initSchema(db: Database.Database) {
       FOREIGN KEY (author_id) REFERENCES users(id)
     );
 
+    -- 多态评论表：支持 document / note / article 三种内容载体
     CREATE TABLE IF NOT EXISTS comments (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      article_id INTEGER NOT NULL,
+      commentable_type TEXT NOT NULL,   -- 'document' | 'note' | 'article'
+      commentable_id INTEGER NOT NULL,
       user_id INTEGER NOT NULL,
-      parent_id INTEGER,
+      parent_id INTEGER,               -- 支持楼中楼回复
       content TEXT NOT NULL,
       status INTEGER DEFAULT 1,
       created_at TEXT DEFAULT (datetime('now','localtime')),
-      FOREIGN KEY (article_id) REFERENCES articles(id),
       FOREIGN KEY (user_id) REFERENCES users(id),
       FOREIGN KEY (parent_id) REFERENCES comments(id)
     );
@@ -79,6 +149,7 @@ function initSchema(db: Database.Database) {
       domain TEXT NOT NULL,
       subcategory TEXT NOT NULL,
       author_id INTEGER NOT NULL,
+      comment_count INTEGER DEFAULT 0,
       status INTEGER DEFAULT 1,
       created_at TEXT DEFAULT (datetime('now','localtime')),
       updated_at TEXT DEFAULT (datetime('now','localtime')),
@@ -95,6 +166,7 @@ function initSchema(db: Database.Database) {
       author_id INTEGER NOT NULL,
       visibility TEXT DEFAULT 'public',
       view_count INTEGER DEFAULT 0,
+      comment_count INTEGER DEFAULT 0,
       status INTEGER DEFAULT 1,
       created_at TEXT DEFAULT (datetime('now','localtime')),
       updated_at TEXT DEFAULT (datetime('now','localtime')),
@@ -111,13 +183,18 @@ function initSchema(db: Database.Database) {
 
     CREATE INDEX IF NOT EXISTS idx_articles_slug ON articles(slug);
     CREATE INDEX IF NOT EXISTS idx_articles_category ON articles(category);
-    CREATE INDEX IF NOT EXISTS idx_comments_article ON comments(article_id);
+    CREATE INDEX IF NOT EXISTS idx_comments_polymorphic ON comments(commentable_type, commentable_id);
+    CREATE INDEX IF NOT EXISTS idx_comments_parent ON comments(parent_id);
     CREATE INDEX IF NOT EXISTS idx_notes_domain ON notes(domain, subcategory);
     CREATE INDEX IF NOT EXISTS idx_documents_slug ON documents(slug);
     CREATE INDEX IF NOT EXISTS idx_documents_domain ON documents(domain, subcategory);
     CREATE INDEX IF NOT EXISTS idx_documents_author ON documents(author_id);
     CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
   `)
+
+  // 补充 ALTER：给 notes / documents 加 comment_count（旧数据库可能没这列）
+  ensureColumn(db, 'notes', 'comment_count', 'INTEGER DEFAULT 0')
+  ensureColumn(db, 'documents', 'comment_count', 'INTEGER DEFAULT 0')
 
   // 初始化默认管理员（如果不存在）
   const adminCount = db.prepare("SELECT COUNT(*) as c FROM users WHERE role = 'admin'").get() as { c: number }

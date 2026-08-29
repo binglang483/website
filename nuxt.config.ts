@@ -13,7 +13,9 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    jwtSecret: process.env.JWT_SECRET || 'manabi-no-niwa-secret-key-change-in-production',
+    // ⚠️ 生产环境必须通过环境变量覆盖 JWT_SECRET！
+    // 默认值仅用于开发测试，绝不能在生产环境使用
+    jwtSecret: process.env.JWT_SECRET || 'dev-only-secret-change-in-production-' + Date.now(),
     dbPath: process.env.DB_PATH || './data/knowledge.db',
     public: {
       siteName: '学びの庭',
@@ -33,6 +35,15 @@ export default defineNuxtConfig({
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌸</text></svg>' }
       ]
+    }
+  },
+
+  // 生产环境安全提示
+  hooks: {
+    'build:before'() {
+      if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
+        console.warn('⚠️  [security] 生产环境建议设置 JWT_SECRET 环境变量')
+      }
     }
   },
 

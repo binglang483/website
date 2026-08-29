@@ -31,7 +31,7 @@
         <input
           v-model="query"
           type="text"
-          placeholder="搜索 博客文章 / 知识库 内容..."
+          placeholder="搜索 文档 / 笔记 ..."
           class="flex-1 h-full px-3 rounded-lg text-sm text-gray-800 bg-transparent outline-none placeholder:text-gray-500"
           @keyup.enter="doSearch"
         />
@@ -46,10 +46,10 @@
 
       <!-- 快速入口 -->
       <div class="flex flex-wrap justify-center gap-3 mt-5">
-        <NuxtLink to="/blog" class="h-9 px-4 rounded-lg bg-white/25 backdrop-blur border border-white/40 text-sm hover:bg-white/35 transition">📖 浏览博客</NuxtLink>
-        <NuxtLink to="/knowledge" class="h-9 px-4 rounded-lg bg-white/25 backdrop-blur border border-white/40 text-sm hover:bg-white/35 transition">📚 知识库</NuxtLink>
+        <NuxtLink to="/docs" class="h-9 px-4 rounded-lg bg-white/25 backdrop-blur border border-white/40 text-sm hover:bg-white/35 transition">📖 浏览文档</NuxtLink>
+        <NuxtLink to="/notes" class="h-9 px-4 rounded-lg bg-white/25 backdrop-blur border border-white/40 text-sm hover:bg-white/35 transition">📓 我的笔记</NuxtLink>
         <NuxtLink v-if="!userStore.isLoggedIn" to="/register" class="h-9 px-4 rounded-lg text-white text-sm font-medium shadow" style="background:linear-gradient(135deg,#f472b6,#a855f7)">✨ 加入我们</NuxtLink>
-        <NuxtLink v-else to="/blog/create" class="h-9 px-4 rounded-lg text-white text-sm font-medium shadow" style="background:linear-gradient(135deg,#f472b6,#a855f7)">✍️ 写文章</NuxtLink>
+        <NuxtLink v-else to="/notes/new" class="h-9 px-4 rounded-lg text-white text-sm font-medium shadow" style="background:linear-gradient(135deg,#f472b6,#a855f7)">✍️ 写笔记</NuxtLink>
       </div>
     </div>
 
@@ -71,14 +71,14 @@ const userStore = useUserStore()
 const route = useRoute()
 const query = ref((route.query.q as string) || '')
 
-// 动漫壁纸列表
+// 动漫壁纸列表（与 public/wallpapers 实际文件对应）
 const wallpapers = [
-  '/wallpapers/1.jpg',
-  '/wallpapers/2.jpg',
-  '/wallpapers/3.jpg',
-  '/wallpapers/4.jpg',
-  '/wallpapers/5.jpg',
-  '/wallpapers/6.jpg',
+  '/wallpapers/1-sakura.jpg',
+  '/wallpapers/2-sea-sunset.jpg',
+  '/wallpapers/3-cyberpunk.jpg',
+  '/wallpapers/4-sunset.jpg',
+  '/wallpapers/5-room.jpg',
+  '/wallpapers/6-neko.jpg',
 ]
 
 const currentIndex = ref(0)
@@ -97,7 +97,7 @@ onUnmounted(() => {
 
 function doSearch() {
   if (query.value.trim()) {
-    navigateTo(`/blog?q=${encodeURIComponent(query.value.trim())}`)
+    navigateTo(`/docs?q=${encodeURIComponent(query.value.trim())}`)
   }
 }
 

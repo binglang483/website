@@ -20,7 +20,7 @@
           :class="`px-3 py-1.5 rounded text-sm transition ${currentCat === cat ? 'text-white' : 'text-gray-600 hover:bg-gray-100'}`"
           :style="currentCat === cat ? {background:'#dd3333'} : {}"
         >
-          {{ cat === '' ? '全部' : getDomainIcon(cat) + ' ' + cat }}
+          {{ cat === '' ? '全部' : getIcon(cat) + ' ' + cat }}
         </button>
       </div>
     </div>
@@ -36,8 +36,8 @@
         class="card card-hover p-4 block"
       >
         <div class="flex items-start gap-3">
-          <div class="w-10 h-10 rounded-lg flex items-center justify-center text-xl flex-shrink-0" :style="{background: getDomainBg(n.domain)}">
-            {{ getDomainIcon(n.domain) }}
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center text-xl flex-shrink-0" :style="{background: getBgColor(n.domain)}">
+            {{ getIcon(n.domain) }}
           </div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2 mb-1 flex-wrap">
@@ -65,10 +65,12 @@
 
 <script setup lang="ts">
 const userStore = useUserStore()
+const { domainNames, getIcon, getBgColor } = useDomains()
 const notes = ref<any[]>([])
 const loading = ref(true)
 const currentCat = ref('')
-const categories = ['', '安全', '开发', '设计', '理学', '工学', '医学', '交叉新兴', '外语', '经济学', '管理学', '职业技能', '通识']
+// 筛选列表加个「全部」前缀
+const categories = ['', ...domainNames]
 
 async function loadNotes() {
   loading.value = true
@@ -84,19 +86,5 @@ async function loadNotes() {
 onMounted(loadNotes)
 
 function formatDate(d: string) { return d?.replace('T', ' ').slice(0, 16) || '' }
-const domainIconMap: Record<string, string> = {
-  '安全': '🔒', '开发': '💻', '设计': '🎨', '理学': '🔬',
-  '工学': '⚙️', '医学': '🏥', '交叉新兴': '🧬', '外语': '🌐',
-  '经济学': '💰', '管理学': '📊', '职业技能': '💼', '通识': '📚'
-}
-function getDomainIcon(c?: string) { return c ? domainIconMap[c] || '📄' : '📄' }
-function getDomainBg(c?: string) {
-  const colors: Record<string, string> = {
-    '安全': '#fff1f1', '开发': '#e8f4ff', '设计': '#f3e8ff',
-    '理学': '#ecfdf5', '工学': '#fff7ed', '医学': '#fdf2f8',
-    '交叉新兴': '#eef2ff', '外语': '#ecfeff', '经济学': '#fefce8',
-    '管理学': '#f0fdfa', '职业技能': '#f9fafb', '通识': '#fffbeb'
-  }
-  return colors[c || ''] || '#f3f4f6'
-}
+// 使用 useDomains 提供的函数，不再重复定义
 </script>

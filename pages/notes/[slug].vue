@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NuxtLink to="/knowledge" class="text-sm text-sakura-600 hover:underline mb-4 inline-block">← 返回知识库</NuxtLink>
+    <NuxtLink to="/notes" class="text-sm text-sakura-600 hover:underline mb-4 inline-block">← 返回笔记</NuxtLink>
 
     <div v-if="loading" class="card p-12 text-center text-gray-400">加载中... 🌸</div>
 
@@ -9,8 +9,8 @@
       <template v-if="!editMode">
         <header class="mb-6 pb-6 border-b border-sakura-100">
           <div class="flex items-center gap-2 mb-2">
-            <NuxtLink :to="`/knowledge/${encodeURIComponent(note.domain)}`" class="tag-sakura">{{ note.domain }}</NuxtLink>
-            <NuxtLink :to="`/knowledge/${encodeURIComponent(note.domain)}/${encodeURIComponent(note.subcategory)}`" class="tag-anime">{{ note.subcategory }}</NuxtLink>
+            <span class="tag-sakura">{{ note.domain }}</span>
+            <span v-if="note.subcategory" class="tag-anime">{{ note.subcategory }}</span>
           </div>
           <h1 class="text-2xl font-bold text-gray-900 mb-3">{{ note.title }}</h1>
           <div class="flex items-center justify-between flex-wrap gap-3">
@@ -77,6 +77,9 @@
         </div>
       </template>
     </article>
+
+    <!-- ========== 评论区 ========== -->
+    <CommentSection v-if="note?.id && !editMode" type="note" :target-id="note.id" />
 
     <div v-else class="card p-12 text-center">
       <p class="text-5xl mb-3">😢</p>
@@ -163,7 +166,7 @@ async function confirmDelete() {
     })
     if (res.code === 200) {
       alert('已删除')
-      navigateTo('/knowledge')
+      navigateTo('/notes')
     } else {
       alert(res.message || '删除失败')
     }
