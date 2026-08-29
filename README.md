@@ -1,157 +1,148 @@
-# 个人知识网站
+﻿# 🌸 学びの庭 (Gaku no Niwa)
 
-全领域知识平台，涵盖安全、开发、设计、理工、外语、经济、管理、医学、职业技能等12大领域。
+一个以知识记录为核心的个人学习空间。全栈 TypeScript · SSR 友好 · 和式美学 UI。
 
-## 技术栈
+## ✨ 特性
 
-| 层级 | 技术 | 版本 |
+- 🏠 **首页**：680px Hero 壁纸轮播（cover 铺满 + 渐变遮罩）+ 搜索框 + 数据看板 + 热门文档 Top5 + 工具分类快选
+- 📚 **文档站**：33+ 技术文档，12 大领域文件树导航，Markdown 实时渲染 + DOMPurify XSS 防护
+- 📓 **笔记系统**：自定义文件夹分类 · 快速记录灵感 · Markdown 编辑
+- 🛠️ **工具箱**：40+ 精选工具，5 大分类（开发/设计/效率/AI/杂项）
+- 🎨 **主题系统**：和纸 / 浅色 / 深色 三套主题，CSS 变量动态切换
+- 🌏 **多语言**：中文 / English / 日本語，Pinia store 响应式 t() 翻译
+- 🖼️ **壁纸系统**：52 张内置壁纸，自动轮播（可暂停），手动选择，透明度可调（10%-100%），设置页分页加载（16+加载更多）
+- ⚙️ **设置中心**：主题 / 语言 / 壁纸 / 字体大小 / 动画开关 / 笔记导出 / 重置
+- 🔐 **用户认证**：JWT 注册登录 · 公开/私密切换
+- 💬 **评论系统**：文档 + 笔记评论
+- 🚀 **HTTP 缓存**：壁纸 + _nuxt 资源 immutable 1 年，API SWR 5 分钟
+
+## 🛠️ 技术栈
+
+| 层级 | 技术 | 说明 |
 |------|------|------|
-| 前端 | Nuxt 4 (Vue 3) | 4.x |
-| UI | TailwindCSS | 3.x |
-| 状态管理 | Pinia | 4.x |
-| 后端 | Spring Boot | 3.2.0 |
-| 数据库 | SQLite | - |
-| ORM | MyBatis-Plus | 3.5.5 |
-| 内容存储 | Markdown 文件 | - |
-| 认证 | JWT | - |
-| 包管理 | pnpm | 11.x |
+| 前端 | Nuxt 3 + Vue 3 | SSR + 全栈 Nitro |
+| 状态 | Pinia | 设置/壁纸/语言持久化 |
+| 样式 | TailwindCSS 3 | + CSS 变量主题系统 |
+| 数据库 | SQLite (better-sqlite3) | 零配置本地存储 |
+| 认证 | JWT (jsonwebtoken) | HttpOnly Cookie |
+| 安全 | DOMPurify + marked | Markdown XSS 防护 |
+| 测试 | Vitest | 单元测试 |
 
-## 快速开始
-
-### 一键启动
+## 🚀 快速开始
 
 ```bash
-cd ~/Desktop/website
-./start.sh
+# 安装依赖
+npm install
+
+# 开发模式 http://localhost:3000
+npm run dev
+
+# 生产构建 + 预览
+npm run build
+npm run preview
 ```
 
-### 手动启动
+### 默认账号
 
-**后端（终端1）：**
-```bash
-cd ~/Desktop/website/backend
-mvn spring-boot:run
-```
+| 角色 | 用户名 | 密码 |
+|------|--------|------|
+| 管理员 | `admin` | `admin123` |
+| 普通用户 | 任意邮箱注册 | /register |
 
-**前端（终端2）：**
-```bash
-source ~/.nvm/nvm.sh && nvm use 22
-cd ~/Desktop/website/frontend
-pnpm dev
-```
-
-### 停止服务
-
-```bash
-./stop.sh
-```
-
-## 访问地址
-
-| 服务 | 地址 |
-|------|------|
-| 前端首页 | http://localhost:3000 |
-| 管理后台 | http://localhost:3000/admin |
-| 后端 API | http://localhost:8080 |
-
-## 默认管理员
-
-- 用户名：`maohai`
-- 密码：`root`
-
-## 功能说明
-
-### 前台功能
-- **首页**：12大知识领域展示
-- **博客**：Markdown 编辑器，支持粘贴图片，文章权限控制
-- **知识库**：左侧树形导航，子分类笔记管理
-- **用户系统**：注册、登录、评论
-
-### 管理后台
-- **仪表盘**：数据统计概览
-- **用户管理**：用户列表、编辑、禁用、角色分配、重置密码
-- **知识库管理**：领域和子分类的增删改
-- **博客管理**：文章审核、下架、删除
-- **评论管理**：评论审核、屏蔽、删除
-- **系统设置**：网站名称、描述、注册开关、评论审核开关
-
-## 12大知识领域
-
-| 领域 | 细分方向 |
-|------|----------|
-| **安全** | 逆向工程、漏洞分析、漏洞利用、病毒分析、加壳脱壳、CTF竞赛、渗透测试、安全工具开发 |
-| **开发** | 前端开发、后端开发、移动端开发、游戏开发、嵌入式/物联网、桌面应用、数据库管理、云原生与DevOps |
-| **设计** | 平面设计、UI/UX设计、3D设计与建模、视频与动效、游戏美术、工业设计 |
-| **理学** | 数学、物理学、化学、天文学、地理科学、大气/海洋科学、地球地质学、生物科学、统计学、心理学 |
-| **工学** | 计算机与电子信息、机械与能源动力、土木建筑水利、材料化工、航空航天兵器、地质矿业安全、交通运输、轻工纺织食品、环境与生物工程、核工程 |
-| **医学** | 基础医学、临床医学、口腔医学、预防医学、药学、生物医学工程、医学检验、医学影像、公共卫生 |
-| **交叉新兴** | 大数据/AI/区块链、新能源/储能、半导体/芯片、生物医学/合成生物、遥感/空间信息、智能制造/机器人、量子信息/计算 |
-| **外语** | 英语、日语、韩语、俄语、翻译学、小语种 |
-| **经济学** | 理论经济、金融学、国际贸易、财政学、税收、保险、数字经济 |
-| **管理学** | 工商管理、公共管理、管理科学与工程 |
-| **职业技能** | 产品/策划、运营/市场、工业制造、研发管理、人力资源、财务/会计、采购/供应链、销售 |
-| **通识** | 学习方法、工具效率、资源分享 |
-
-## 项目结构
+## 📂 项目结构
 
 ```
 website/
-├── frontend/              # Nuxt 4 前端
-│   ├── pages/             # 页面
-│   │   ├── admin/         # 管理后台
-│   │   ├── blog/          # 博客
-│   │   └── knowledge/     # 知识库
-│   ├── components/        # 组件
-│   ├── stores/            # Pinia 状态管理
-│   ├── layouts/           # 布局
-│   └── server/api/        # API 路由（笔记）
-│
-├── backend/               # Spring Boot 后端
-│   └── src/main/java/com/knowledge/
-│       ├── controller/    # 控制器
-│       ├── entity/        # 实体类
-│       ├── mapper/        # MyBatis Mapper
-│       ├── service/       # 服务层
-│       ├── config/        # 配置类
-│       └── util/          # 工具类
-│
-├── content/               # Markdown 内容存储
-│   ├── blog/              # 博客文章
-│   └── {领域}/{子分类}/   # 知识库笔记
-│
-├── start.sh               # 一键启动脚本
-├── stop.sh                # 停止脚本
-└── docs/                  # 项目文档
+├── components/
+│   ├── HeroBanner.vue       # 首页壁纸轮播 + 搜索
+│   └── Sidebar.vue          # 侧边栏目录
+├── composables/
+│   ├── i18n.ts              # 三语种字典 (zh/en/ja 47+ keys)
+│   ├── useI18n.ts           # 响应式翻译 hook
+│   └── useMarkdown.ts       # Markdown 安全渲染 (DOMPurify + marked)
+├── layouts/default.vue      # 导航栏 + 主题🎨/语言🇨🇳 切换
+├── pages/
+│   ├── index.vue            # 首页 (Hero + 数据看板 + 热门 + 工具分类)
+│   ├── about.vue            # 关于页
+│   ├── settings.vue         # 设置中心
+│   ├── docs/index.vue       # 文档列表 (卡片美化)
+│   ├── docs/[...path].vue   # 文档详情 (Markdown)
+│   ├── notes/               # 笔记 CRUD
+│   ├── tools/index.vue      # 工具箱 (40+ 工具, 5 分类)
+│   └── login.vue / register.vue
+├── public/wallpapers/       # 52 张壁纸 (01.jpg - 52.png, <5MB each)
+├── server/
+│   ├── api/wallpapers.get.ts          # 壁纸列表 API
+│   ├── api/stats/index.get.ts         # 站点统计 + 热门文档
+│   ├── api/docs/tree.get.ts           # 文档树
+│   ├── api/docs/[...path].get.ts      # 文档详情
+│   ├── api/auth/                      # 登录注册
+│   ├── api/notes/                     # 笔记 CRUD
+│   ├── api/categories/                # 分类 CRUD
+│   ├── api/comments/                   # 评论
+│   ├── middleware/                    # 速率限制 + 请求日志
+│   ├── migrations/schema.ts           # 数据库 schema
+│   ├── seed/                          # 管理员 + 分类种子
+│   └── utils/response.ts             # 统一响应工具
+├── stores/settings.ts        # Pinia 设置 store
+├── data/knowledge.db         # SQLite 数据库 (运行时生成)
+└── nuxt.config.ts            # routeRules HTTP 缓存
 ```
 
-## 数据存储
+## 🎨 主题与壁纸
 
-| 类型 | 存储方式 | 路径 |
-|------|---------|------|
-| 用户数据 | SQLite | backend/data/app.db |
-| 文章数据 | SQLite | backend/data/app.db |
-| 评论数据 | SQLite | backend/data/app.db |
-| 分类数据 | SQLite | backend/data/app.db |
-| 系统设置 | SQLite | backend/data/app.db |
-| 知识库笔记 | Markdown | content/{领域}/{子分类}/ |
+### 三套主题 (CSS 变量)
 
-## 开发命令
+| 主题 | data-theme | 效果 |
+|------|-----------|------|
+| 和纸 (默认) | `washi` | 米白 #faf8f5 + 粉紫樱花渐变 |
+| 浅色 | `light` | 纯白 #ffffff + 极简配色 |
+| 深色 | `dark` | 深蓝 #1a1a2e + 夜樱花 |
+
+### 壁纸规范
+
+- **位置**：`public/wallpapers/`
+- **命名**：两位数字 (01-52)，jpg/png 均可
+- **大小**：≤ 5MB（sharp CLI 压缩）
+- **分辨率**：推荐 ≥ 1920×1080
+- **加载**：设置页默认渲染 16 张，点"加载更多"翻页
+
+## 🌐 缓存策略 (nuxt.config routeRules)
+
+```ts
+routeRules: {
+  '/wallpapers/**':   { headers: { 'Cache-Control': 'public, max-age=31536000, immutable' } },
+  '/_nuxt/**':        { headers: { 'Cache-Control': 'public, max-age=31536000, immutable' } },
+  '/api/wallpapers':  { swr: true, headers: { 'Cache-Control': 'public, max-age=300' } },
+}
+```
+
+## 🧪 测试
 
 ```bash
-# 前端
-cd frontend
-pnpm dev       # 开发模式
-pnpm build     # 构建
-pnpm generate  # 静态生成
-
-# 后端
-cd backend
-mvn spring-boot:run          # 开发模式
-mvn clean package            # 打包
-java -jar target/*.jar       # 运行
+npm run test       # Vitest 单元测试
 ```
 
-## 文档
+测试覆盖：响应格式 (14) · Markdown XSS 防护 (14) · 数据库 schema (14)
 
-- [项目方案文档](docs/项目方案文档.md)
-- [网站板块分类体系](docs/网站板块分类体系.md)
+## 🔒 生产安全
+
+```bash
+JWT_SECRET=your-production-secret
+npm run build
+```
+
+生产构建强制校验 JWT_SECRET，缺失则抛 fatal error。
+
+## 📦 部署
+
+```bash
+npm run build
+npm run preview
+# 或用 pm2 守护
+pm2 start .output/server/index.mjs --name gaku-no-niwa
+```
+
+## 📜 License
+
+MIT — 仅供个人学习使用。
