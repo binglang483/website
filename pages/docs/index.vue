@@ -1,9 +1,7 @@
 <template>
   <div class="min-h-[calc(100vh-80px)]">
     <!-- Hero -->
-    <section class="relative overflow-hidden rounded-lg mb-6 px-6 py-10" style="background:linear-gradient(135deg,#fce4ec 0%,#e8eaf6 100%);border:1px solid #eceae4">
-      <div class="absolute inset-0 bg-gradient-to-br from-pink-500/15 via-purple-500/10 to-indigo-500/15"></div>
-      
+    <section class="page-banner docs-banner relative overflow-hidden rounded-lg mb-6 px-6 py-10">
       <div class="relative">
         <h1 class="text-3xl md:text-4xl font-bold mb-2 flex items-center gap-3">📚 文档知识树</h1>
         <p class="text-gray-600 text-sm">全領域の知識を体系化して、33 篇のマークダウン文書を閲覧できます</p>

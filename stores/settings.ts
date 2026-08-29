@@ -29,7 +29,6 @@ function loadFromStorage(): Partial<State> {
 export const useSettingsStore = defineStore('settings', {
   state: (): State => ({
     theme: 'washi',
-    lang: 'zh',
     wallpapers: { autoPlay: true, interval: 6000, selected: null, opacity: 0.45 },
     fontSize: 'md',
     animations: true,
@@ -40,9 +39,7 @@ export const useSettingsStore = defineStore('settings', {
     isWashi: (s) => s.theme === 'washi',
   },
   actions: {
-    setTheme(t: Theme) { this.theme = t; this.applyTheme(); this.persist() },
-    setLang(l: Lang) { this.lang = l; this.persist() },
-    setWallSettings(patch: Partial<WallSettings>) { Object.assign(this.wallpapers, patch); this.persist() },
+    setTheme(t: Theme) { this.theme = t; this.applyTheme(); this.persist() },    setWallSettings(patch: Partial<WallSettings>) { Object.assign(this.wallpapers, patch); this.persist() },
     setFontSize(s: 'sm'|'md'|'lg') { this.fontSize = s; this.applyTheme(); this.persist() },
     setAnimations(b: boolean) { this.animations = b; this.persist() },
     persist() {

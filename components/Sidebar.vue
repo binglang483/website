@@ -2,7 +2,7 @@
   <div class="sidebar-washi">
     <div class="flex items-center gap-2 mb-3 px-1">
       <span class="text-base">📁</span>
-      <h3 class="font-semibold text-sm tracking-wider" style="color:#3a3a3a">文档目录</h3>
+      <h3 class="font-semibold text-sm tracking-wider">文档目录</h3>
     </div>
 
     <div v-if="loading" class="text-xs text-gray-400 text-center py-4">加载中...</div>

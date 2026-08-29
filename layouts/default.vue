@@ -16,8 +16,8 @@
             <NuxtLink to="/docs" class="nav-link" active-class="nav-link-active">📖 文档</NuxtLink>
             <NuxtLink to="/notes" class="nav-link" active-class="nav-link-active">📓 笔记</NuxtLink>
             <NuxtLink to="/tools" class="nav-link" active-class="nav-link-active">🛠️ 工具</NuxtLink>
-            <NuxtLink to="/about" class="nav-link" active-class="nav-link-active">📘 {{ t('nav.about') }}</NuxtLink>
-<NuxtLink to="/settings" class="nav-link" active-class="nav-link-active">⚙️ {{ t('nav.settings') }}</NuxtLink>
+            <NuxtLink to="/about" class="nav-link" active-class="nav-link-active">📘 关于</NuxtLink>
+<NuxtLink to="/settings" class="nav-link" active-class="nav-link-active">⚙️ 设置</NuxtLink>
           
 <!-- theme + lang -->
 <div class="flex items-center gap-1 ml-auto">
@@ -26,11 +26,6 @@
     <span v-else-if="settings.isDark">🌙</span>
     <span v-else>☀️</span>
   </button>
-  <select v-model="settings.lang" @change="settings.setLang(settings.lang)" title="Lang" class="px-2 py-1 rounded text-xs border bg-white ml-1 cursor-pointer">
-    <option value="zh">🇨🇳 中</option>
-    <option value="en">🇺🇸 EN</option>
-    <option value="ja">🇯🇵 日</option>
-  </select>
 </div>
 </nav>
 
@@ -127,9 +122,8 @@ function doSearch() {
 }
 
 import { useSettingsStore } from '~/stores/settings';
-import { useI18n } from '~/composables/useI18n';
+
 const settings = useSettingsStore();
-const { t } = useI18n();
 function toggleTheme() {
   const cycle = { washi: "light", light: "dark", dark: "washi" };
   settings.setTheme(cycle[settings.theme]);

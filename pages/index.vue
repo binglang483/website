@@ -22,19 +22,19 @@
     <div class="card p-5">
       <h2 class="text-sm font-bold text-gray-700 mb-4 flex items-center gap-2"><span>📊</span> 站点数据</h2>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div class="text-center p-4 rounded-lg" style="background:linear-gradient(135deg,#fdf2f8,#fce7f3)">
+        <div class="stat-card stat-pink text-center p-4 rounded-lg">
           <div class="text-2xl font-bold text-[#ec4899]">{{ stats?.data?.stats?.documents ?? 33 }}</div>
           <div class="text-xs text-gray-500 mt-1">📄 文档</div>
         </div>
-        <div class="text-center p-4 rounded-lg" style="background:linear-gradient(135deg,#eff6ff,#dbeafe)">
+        <div class="stat-card stat-blue text-center p-4 rounded-lg">
           <div class="text-2xl font-bold text-[#3b82f6]">{{ stats?.data?.stats?.notes ?? 0 }}</div>
           <div class="text-xs text-gray-500 mt-1">📓 笔记</div>
         </div>
-        <div class="text-center p-4 rounded-lg" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7)">
+        <div class="stat-card stat-green text-center p-4 rounded-lg">
           <div class="text-2xl font-bold text-[#10b981]">{{ toolCount }}</div>
           <div class="text-xs text-gray-500 mt-1">🛠️ 工具</div>
         </div>
-        <div class="text-center p-4 rounded-lg" style="background:linear-gradient(135deg,#fefce8,#fef9c3)">
+        <div class="stat-card stat-yellow text-center p-4 rounded-lg">
           <div class="text-2xl font-bold text-[#eab308]">{{ stats?.data?.stats?.total_views ?? 0 }}</div>
           <div class="text-xs text-gray-500 mt-1">👁️ 总阅读</div>
         </div>
@@ -78,8 +78,6 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useI18n } from '~/composables/useI18n'
-const { t } = useI18n()
 import HeroBanner from '~/components/HeroBanner.vue'
 
 // 站点统计

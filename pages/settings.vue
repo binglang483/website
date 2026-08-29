@@ -1,11 +1,11 @@
 <template>
   <div class="page-container max-w-4xl mx-auto py-8 px-4">
-    <h1 class="text-2xl font-bold mb-2 text-ink">⚙️ {{ t('settings.title') }}</h1>
+    <h1 class="text-2xl font-bold mb-2 text-ink">⚙️ 设置</h1>
     <p class="text-sm text-gray-500 mb-8">定制你的学习空间体验</p>
 
     <!-- 主题 -->
     <div class="card p-5 mb-4">
-      <div class="flex items-center gap-2 mb-3">🎨 <span class="font-semibold text-ink">{{ t('settings.theme') }}</span></div>
+      <div class="flex items-center gap-2 mb-3">🎨 <span class="font-semibold text-ink">主题</span></div>
       <div class="flex gap-3">
         <button v-for="opt in themeOptions" :key="opt.v"
           @click="settings.setTheme(opt.v)"
@@ -15,37 +15,25 @@
       </div>
     </div>
 
-    <!-- 语言 -->
-    <div class="card p-5 mb-4">
-      <div class="flex items-center gap-2 mb-3">🌐 <span class="font-semibold text-ink">{{ t('settings.lang') }}</span></div>
-      <div class="flex gap-3">
-        <button v-for="opt in langOptions" :key="opt.v"
-          @click="settings.setLang(opt.v)"
-          class="px-4 py-2 rounded text-sm transition"
-          :class="settings.lang === opt.v ? 'bg-[#c0392b] text-white shadow' : 'bg-[#f4f1ea] text-gray-700 hover:bg-[#eceae4]'"
-        >{{ opt.label }}</button>
-      </div>
-    </div>
-
     <!-- 壁纸 -->
     <div class="card p-5 mb-4">
-      <div class="flex items-center gap-2 mb-4">🖼️ <span class="font-semibold text-ink">{{ t('settings.wallpapers') }}</span></div>
+      <div class="flex items-center gap-2 mb-4">🖼️ <span class="font-semibold text-ink">壁纸</span></div>
 
       <div class="flex items-center gap-4 mb-4">
         <label class="flex items-center gap-2 text-sm">
           <input type="checkbox" :checked="settings.wallpapers.autoPlay" @change="onWallAutoChange" />
-          {{ t('settings.wall.auto') }}
+          自动轮播
         </label>
         <label class="flex items-center gap-2 text-sm">
-          {{ t('settings.wall.interval') }}:
+          切换间隔:
           <select :value="settings.wallpapers.interval" @change="onWallIntervalChange" class="border rounded px-2 py-1 text-sm bg-white">
-            <option :value="3000">3{{ t('settings.wall.seconds') }}</option>
-            <option :value="5000">5{{ t('settings.wall.seconds') }}</option>
-            <option :value="6000">6{{ t('settings.wall.seconds') }}</option>
-            <option :value="10000">10{{ t('settings.wall.seconds') }}</option>
+            <option :value="3000">3秒</option>
+            <option :value="5000">5秒</option>
+            <option :value="6000">6秒</option>
+            <option :value="10000">10秒</option>
           </select>
         </label>
-        <button @click="refresh" class="text-xs px-3 py-1 rounded bg-[#f4f1ea] hover:bg-[#eceae4]">{{ t('settings.wall.refresh') }}</button>
+        <button @click="refresh" class="text-xs px-3 py-1 rounded bg-[#f4f1ea] hover:bg-[#eceae4]">刷新壁纸列表</button>
       </div>
 
       <div class="flex items-center gap-3 mb-3">
@@ -55,10 +43,10 @@
       </div>
 
       <div class="text-xs text-gray-500 mb-2">
-        {{ t('settings.wall.current') }}:
+        当前壁纸:
         <span v-if="settings.wallpapers.selected">{{ settings.wallpapers.selected.split('/').pop() }}</span>
-        <span v-else class="italic">{{ t('settings.wall.none') }}</span>
-        <button v-if="settings.wallpapers.selected" @click="settings.setWallSettings({ selected: null })" class="ml-2 text-[#c0392b] hover:underline">{{ t('settings.wall.clear') }}</button>
+        <span v-else class="italic">未选择（使用轮播）</span>
+        <button v-if="settings.wallpapers.selected" @click="settings.setWallSettings({ selected: null })" class="ml-2 text-[#c0392b] hover:underline">清除选择（恢复轮播）</button>
       </div>
 
       <div v-if="loading" class="text-center py-6 text-gray-400 text-sm">加载中...</div>
@@ -80,26 +68,26 @@
 
     <!-- 其他 -->
     <div class="card p-5 mb-4">
-      <div class="flex items-center gap-2 mb-3">⚙️ <span class="font-semibold text-ink">{{ t('settings.misc') }}</span></div>
+      <div class="flex items-center gap-2 mb-3">⚙️ <span class="font-semibold text-ink">其他</span></div>
       <div class="flex items-center gap-4 mb-4">
         <label class="flex items-center gap-2 text-sm">
-          {{ t('settings.fontSize') }}:
+          字体大小:
           <select :value="settings.fontSize" @change="onFontSizeChange" class="border rounded px-2 py-1 text-sm bg-white">
             <option value="sm">小</option><option value="md">中</option><option value="lg">大</option>
           </select>
         </label>
         <label class="flex items-center gap-2 text-sm">
           <input type="checkbox" :checked="settings.animations" @change="onAnimChange" />
-          {{ t('settings.animations') }}
+          动画效果
         </label>
       </div>
       <div class="flex gap-2 flex-wrap">
-        <button @click="exportNotes" class="px-3 py-1.5 rounded text-sm bg-[#f4f1ea] hover:bg-[#eceae4] border">{{ t('settings.export') }}</button>
+        <button @click="exportNotes" class="px-3 py-1.5 rounded text-sm bg-[#f4f1ea] hover:bg-[#eceae4] border">导出我的笔记</button>
         <label class="px-3 py-1.5 rounded text-sm bg-[#f4f1ea] hover:bg-[#eceae4] border cursor-pointer">
-          {{ t('settings.import') }}
+          导入笔记
           <input type="file" accept=".json" class="hidden" @change="onImportFile" />
         </label>
-        <button @click="doReset" class="px-3 py-1.5 rounded text-sm text-[#c0392b] hover:bg-red-50 border border-red-200 ml-auto">{{ t('settings.reset') }}</button>
+        <button @click="doReset" class="px-3 py-1.5 rounded text-sm text-[#c0392b] hover:bg-red-50 border border-red-200 ml-auto">重置所有设置</button>
       </div>
     </div>
 
@@ -119,16 +107,14 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from '~/composables/useI18n'
 import { useSettingsStore } from '~/stores/settings'
 
-const { t } = useI18n()
 const settings = useSettingsStore()
 
 const themeOptions = [
-  { v: 'washi' as const, label: t('settings.theme.washi') },
-  { v: 'light' as const, label: t('settings.theme.light') },
-  { v: 'dark' as const, label: t('settings.theme.dark') },
+  { v: 'washi' as const, label: '和纸（默认）' },
+  { v: 'light' as const, label: '浅色' },
+  { v: 'dark' as const, label: '深色' },
 ]
 const langOptions = [
   { v: 'zh' as const, label: '🇨🇳 中文' },
@@ -181,7 +167,7 @@ function exportNotes() {
   })
 }
 function doReset() {
-  if (confirm(t('settings.resetConfirm'))) {
+  if (confirm('确定要重置所有设置吗？')) {
     localStorage.removeItem('gaku-no-niwa-settings')
     location.reload()
   }

@@ -1,30 +1,15 @@
 <template>
   <div class="tools-page">
     <!-- ========== 顶部 Banner ========== -->
-    <section class="relative overflow-hidden rounded-lg mb-6" style="background:linear-gradient(135deg,#e8f5e9 0%,#f0fdf4 100%);border:1px solid #eceae4;min-height:260px">
+    <section class="page-banner tools-banner relative overflow-hidden rounded-lg mb-6" style="min-height:260px">
       <!-- 多层渐变背景 -->
-      <div class="absolute inset-0" style="background: radial-gradient(ellipse at 20% 0%, rgba(244,114,182,0.35) 0%, transparent 55%), radial-gradient(ellipse at 80% 100%, rgba(168,85,247,0.35) 0%, transparent 55%), linear-gradient(135deg,#fff1f2 0%,#fdf4ff 50%,#f0f9ff 100%) "></div>
       <!-- 装饰性圆形 -->
-      <div class="absolute -top-10 -right-10 w-52 h-52 rounded-full opacity-20" style="background:radial-gradient(circle,#ec4899,#a855f7)"></div>
-      <div class="absolute -bottom-16 -left-10 w-60 h-60 rounded-full opacity-15" style="background:radial-gradient(circle,#a855f7,#6366f1)"></div>
       <!-- 噪点纹理 -->
-      <div class="absolute inset-0 opacity-[0.03]" :style="{ backgroundImage: 'url(\'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22160%22 height=%22160%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>\')' }"></div>
       <!-- SVG 樱花 -->
-      <svg class="absolute top-4 right-12 w-16 h-16 opacity-40" viewBox="0 0 100 100">
-        <g fill="#f472b6">
-          <ellipse cx="50" cy="15" rx="10" ry="15"/>
-          <ellipse cx="85" cy="35" rx="10" ry="15" transform="rotate(72 85 35)"/>
-          <ellipse cx="72" cy="75" rx="10" ry="15" transform="rotate(144 72 75)"/>
-          <ellipse cx="28" cy="75" rx="10" ry="15" transform="rotate(216 28 75)"/>
-          <ellipse cx="15" cy="35" rx="10" ry="15" transform="rotate(288 15 35)"/>
-        </g>
-        <circle cx="50" cy="50" r="5" fill="#fbbf24"/>
-      </svg>
-
       <div class="relative px-8 py-10 md:px-12 md:py-12">
         <div class="flex items-center gap-2 mb-3">
           <span class="inline-block text-2xl">🛠️</span>
-          <span class="text-xs font-semibold tracking-widest px-2.5 py-0.5 rounded-full" style="background:rgba(221,51,51,0.1);color:#dd3333">TOOLBOX</span>
+          <span class="toolbox-badge text-xs font-semibold tracking-widest px-2.5 py-0.5 rounded-full">TOOLBOX</span>
         </div>
         <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">开发者 & 创作者工具箱</h1>
         <p class="text-sm md:text-base text-gray-500 max-w-xl">精选常用工具与效率神器 · 免费在线使用 · 无需注册 · 持续更新</p>
