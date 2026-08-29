@@ -1,11 +1,7 @@
 import { nanoid } from 'nanoid'
 import { getDb } from '~/server/utils/db'
-import { getAuthUser } from '~/server/utils/jwt'
 
 export default defineEventHandler(async (event) => {
-  const auth = getAuthUser(event)
-  if (!auth) return { code: 401, message: '请先登录', data: null }
-
   const query = getQuery(event)
   const page = parseInt(query.page as string) || 1
   const size = Math.min(parseInt(query.size as string) || 20, 50)

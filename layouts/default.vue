@@ -14,6 +14,7 @@
           <nav class="hidden md:flex items-center gap-1 ml-2">
             <NuxtLink to="/" class="nav-link" active-class="nav-link-active">🏠 首页</NuxtLink>
             <NuxtLink to="/docs" class="nav-link" active-class="nav-link-active">📖 文档</NuxtLink>
+            <NuxtLink to="/notes" class="nav-link" active-class="nav-link-active">📓 笔记</NuxtLink>
             <NuxtLink to="/blog" class="nav-link" active-class="nav-link-active">📝 博客</NuxtLink>
             <NuxtLink to="/knowledge" class="nav-link" active-class="nav-link-active">📚 知识库</NuxtLink>
             <NuxtLink to="/about" class="nav-link" active-class="nav-link-active">💡 关于</NuxtLink>
