@@ -1,4 +1,5 @@
 import { getDb } from '~/server/utils/db'
+import { ok } from '~/server/utils/response'
 
 export default defineEventHandler(async () => {
   const db = getDb()
@@ -23,5 +24,5 @@ export default defineEventHandler(async () => {
     GROUP BY u.id ORDER BY doc_count DESC LIMIT 5
   `).all()
 
-  return { code: 200, message: 'ok', data: { stats, hotDocs, topContributors } }
+  return ok({ stats, hotDocs, topContributors })
 })

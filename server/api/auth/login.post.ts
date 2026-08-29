@@ -1,23 +1,24 @@
 import bcrypt from 'bcryptjs'
 import { getDb } from '~/server/utils/db'
 import { signToken } from '~/server/utils/jwt'
+import { badRequest, unauthorized, forbidden } from '~/server/utils/response'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event) as { username: string; password: string }
 
   if (!body.username?.trim() || !body.password?.trim()) {
-    return { code: 400, message: '请输入用户名和密码', data: null }
+    return badRequest('请输入用户名和密码')
   }
 
   const db = getDb()
   const user = db.prepare('SELECT * FROM users WHERE username = ?').get(body.username) as any
 
   if (!user || !bcrypt.compareSync(body.password, user.password)) {
-    return { code: 401, message: '用户名或密码错误', data: null }
+    return unauthorized('用户名或密码错误')
   }
 
   if (user.status !== 1) {
-    return { code: 403, message: '账号已被禁用', data: null }
+    return forbidden('账号已被禁用')
   }
 
   const token = signToken({ userId: user.id, username: user.username, role: user.role })

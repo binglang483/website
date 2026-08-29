@@ -1,179 +1,169 @@
 <template>
-  <div class="flex gap-0 min-h-[calc(100vh-200px)]">
-    <!-- ========== 左侧文件树 ========== -->
-    <aside class="hidden md:block w-60 flex-shrink-0 mr-3">
-      <div class="card p-3 sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto">
-        <div class="flex items-center gap-2 mb-3 px-2">
-          <span class="text-base">📚</span>
-          <h3 class="font-semibold text-gray-800 text-sm">知识文档</h3>
-          <span class="text-xs text-gray-400">{{ tree.length }} 域</span>
+  <div>
+    <!-- ========== 正文 + 右侧 TOC ========== -->
+    <div class="flex gap-0 min-h-[calc(100vh-200px)]">
+      <!-- 正文区 -->
+      <div class="flex-1 min-w-0 max-w-4xl">
+        <div v-if="loading" class="card p-8 text-center text-gray-400 text-sm">加载中...</div>
+
+        <!-- ========== 无权限 ========== -->
+        <div v-else-if="error === '这是私密文档，无权限访问'" class="card p-12 text-center">
+          <p class="text-4xl mb-3">🔒</p>
+          <p class="text-gray-500 text-sm mb-1">这是一篇私密文档</p>
+          <p class="text-gray-400 text-xs mb-4">只有作者和管理员才能查看</p>
+          <NuxtLink to="/docs" class="text-[#dd3333] text-sm hover:underline">← 返回公开文档</NuxtLink>
         </div>
-        <FileTree :nodes="tree" :activePath="currentPath" />
-      </div>
-    </aside>
 
-    <!-- ========== 中间正文区 ========== -->
-    <div class="flex-1 min-w-0 max-w-3xl">
-      <div v-if="loading" class="card p-8 text-center text-gray-400 text-sm">加载中...</div>
+        <!-- ========== 查看模式 ========== -->
+        <template v-else-if="doc && !editMode">
+          <article class="card p-6 md:p-8">
+            <!-- 面包屑 -->
+            <div class="flex items-center gap-1 text-xs text-gray-400 mb-4">
+              <NuxtLink to="/docs" class="hover:text-[#dd3333]">📖 文档</NuxtLink>
+              <template v-for="(seg, i) in pathSegments" :key="i">
+                <span>/</span>
+                <span class="text-gray-600">{{ seg }}</span>
+              </template>
+              <span v-if="doc.visibility === 'private'" class="ml-1 text-[10px] px-1.5 py-0.5 rounded bg-yellow-50 text-yellow-600 border border-yellow-200">🔒 私密</span>
+            </div>
 
-      <!-- ========== 无权限 ========== -->
-      <div v-else-if="error === '这是私密文档，无权限访问'" class="card p-12 text-center">
-        <p class="text-4xl mb-3">🔒</p>
-        <p class="text-gray-500 text-sm mb-1">这是一篇私密文档</p>
-        <p class="text-gray-400 text-xs mb-4">只有作者和管理员才能查看</p>
-        <NuxtLink to="/docs" class="text-[#dd3333] text-sm hover:underline">← 返回公开文档</NuxtLink>
-      </div>
-
-      <!-- ========== 查看模式 ========== -->
-      <template v-else-if="doc && !editMode">
-        <article class="card p-6 md:p-8">
-          <!-- 面包屑 -->
-          <div class="flex items-center gap-1 text-xs text-gray-400 mb-4">
-            <NuxtLink to="/docs" class="hover:text-[#dd3333]">📖 文档</NuxtLink>
-            <template v-for="(seg, i) in pathSegments" :key="i">
-              <span>/</span>
-              <span class="text-gray-600">{{ seg }}</span>
-            </template>
-            <span v-if="doc.visibility === 'private'" class="ml-1 text-[10px] px-1.5 py-0.5 rounded bg-yellow-50 text-yellow-600 border border-yellow-200">🔒 私密</span>
-          </div>
-
-          <!-- 作者信息头 -->
-          <header class="mb-5 pb-5 border-b border-gray-100">
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-3">{{ doc.title }}</h1>
-            <div class="flex items-center justify-between flex-wrap gap-2">
-              <!-- 作者 -->
-              <NuxtLink :to="`/user/${doc.author.id}`" class="flex items-center gap-2 group">
-                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sakura-400 to-purple-500 text-white flex items-center justify-center text-xs font-bold">
-                  {{ (doc.author?.name || '?')[0] }}
-                </div>
-                <div>
-                  <div class="text-sm font-medium text-gray-700 group-hover:text-[#dd3333]">
-                    {{ doc.author?.name || '未知作者' }}
-                    <span v-if="doc.author?.role === 'admin'" class="text-[10px] px-1 py-0.5 ml-1 rounded text-white" style="background:#dd3333">管理员</span>
+            <!-- 作者信息头 -->
+            <header class="mb-5 pb-5 border-b border-gray-100">
+              <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-3">{{ doc.title }}</h1>
+              <div class="flex items-center justify-between flex-wrap gap-2">
+                <!-- 作者 -->
+                <NuxtLink :to="`/user/${doc.author.id}`" class="flex items-center gap-2 group">
+                  <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sakura-400 to-purple-500 text-white flex items-center justify-center text-xs font-bold">
+                    {{ (doc.author?.name || '?')[0] }}
                   </div>
-                  <div class="text-xs text-gray-400">
-                    📅 {{ formatDate(doc.created_at) }}
-                    <span class="mx-1">·</span>
-                    👁️ {{ doc.view_count || 0 }} 阅读
+                  <div>
+                    <div class="text-sm font-medium text-gray-700 group-hover:text-[#dd3333]">
+                      {{ doc.author?.name || '未知作者' }}
+                      <span v-if="doc.author?.role === 'admin'" class="text-[10px] px-1 py-0.5 ml-1 rounded text-white" style="background:#dd3333">管理员</span>
+                    </div>
+                    <div class="text-xs text-gray-400">
+                      📅 {{ formatDate(doc.created_at) }}
+                      <span class="mx-1">·</span>
+                      👁️ {{ doc.view_count || 0 }} 阅读
+                    </div>
                   </div>
-                </div>
-              </NuxtLink>
+                </NuxtLink>
 
-              <!-- 操作按钮（作者本人或 admin）-->
-              <div v-if="doc.canEdit" class="flex items-center gap-2">
-                <!-- 权限切换 -->
-                <div class="flex items-center gap-1 text-xs">
-                  <button
-                    @click="toggleVisibility"
-                    class="flex items-center gap-1 px-2 py-1 rounded-md border transition"
-                    :class="doc.visibility === 'public'
-                      ? 'border-gray-200 text-gray-600 hover:border-[#dd3333] hover:text-[#dd3333]'
-                      : 'border-yellow-300 bg-yellow-50 text-yellow-700'"
-                    :title="doc.visibility === 'public' ? '点击设为私密' : '点击设为公开'"
-                  >
-                    {{ doc.visibility === 'public' ? '🌐 公开' : '🔒 私密' }}
-                  </button>
+                <!-- 操作按钮（作者本人或 admin）-->
+                <div v-if="doc.canEdit" class="flex items-center gap-2">
+                  <!-- 权限切换 -->
+                  <div class="flex items-center gap-1 text-xs">
+                    <button
+                      @click="toggleVisibility"
+                      class="flex items-center gap-1 px-2 py-1 rounded-md border transition"
+                      :class="doc.visibility === 'public'
+                        ? 'border-gray-200 text-gray-600 hover:border-[#dd3333] hover:text-[#dd3333]'
+                        : 'border-yellow-300 bg-yellow-50 text-yellow-700'"
+                      :title="doc.visibility === 'public' ? '点击设为私密' : '点击设为公开'"
+                    >
+                      {{ doc.visibility === 'public' ? '🌐 公开' : '🔒 私密' }}
+                    </button>
+                  </div>
+                  <button @click="startEdit" class="px-3 py-1 text-xs rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition">✏️ 编辑</button>
+                  <button @click="confirmDelete" class="px-3 py-1 text-xs rounded-md bg-red-50 text-[#dd3333] hover:bg-red-100 transition">🗑️ 删除</button>
                 </div>
-                <button @click="startEdit" class="px-3 py-1 text-xs rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition">✏️ 编辑</button>
-                <button @click="confirmDelete" class="px-3 py-1 text-xs rounded-md bg-red-50 text-[#dd3333] hover:bg-red-100 transition">🗑️ 删除</button>
               </div>
+            </header>
+
+            <!-- Markdown 渲染 -->
+            <div class="markdown-body" v-html="rendered"></div>
+
+            <!-- 页面底部 -->
+            <div class="mt-10 pt-5 border-t border-gray-100 text-xs text-gray-400 flex items-center justify-between">
+              <span v-if="doc.updated_at !== doc.created_at">最后更新：{{ formatDate(doc.updated_at) }}</span>
+              <span class="ml-auto">{{ doc.content?.split('\n').length }} 行 · {{ doc.content?.length }} 字符</span>
             </div>
-          </header>
+          </article>
 
-          <!-- Markdown 渲染 -->
-          <div class="markdown-body" v-html="rendered"></div>
+          <!-- ========== 评论区 ========== -->
+          <CommentSection v-if="doc?.id" type="document" :target-id="doc.id" />
+        </template>
 
-          <!-- 页面底部 -->
-          <div class="mt-10 pt-5 border-t border-gray-100 text-xs text-gray-400 flex items-center justify-between">
-            <span v-if="doc.updated_at !== doc.created_at">最后更新：{{ formatDate(doc.updated_at) }}</span>
-            <span class="ml-auto">{{ doc.content?.split('\n').length }} 行 · {{ doc.content?.length }} 字符</span>
-          </div>
-        </article>
+        <!-- ========== 编辑模式 ========== -->
+        <template v-else>
+          <article class="card p-6 md:p-8">
+            <header class="mb-5 pb-5 border-b border-gray-100">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="tag-sakura">{{ doc.domain }}</span>
+                <span v-if="doc.subcategory" class="tag-anime">{{ doc.subcategory }}</span>
+                <span class="text-xs text-[#dd3333] font-medium">📝 编辑中</span>
+              </div>
+              <input
+                v-model="editForm.title"
+                type="text"
+                class="w-full text-2xl md:text-3xl font-bold text-gray-900 border border-gray-200 rounded-lg px-3 py-2 focus:border-[#dd3333] focus:outline-none"
+                placeholder="文档标题"
+              />
+            </header>
 
-        <!-- ========== 评论区 ========== -->
-        <CommentSection v-if="doc?.id" type="document" :target-id="doc.id" />
-      </template>
-
-      <!-- ========== 编辑模式 ========== -->
-      <template v-else>
-        <article class="card p-6 md:p-8">
-          <header class="mb-5 pb-5 border-b border-gray-100">
-            <div class="flex items-center gap-2 mb-3">
-              <span class="tag-sakura">{{ doc.domain }}</span>
-              <span v-if="doc.subcategory" class="tag-anime">{{ doc.subcategory }}</span>
-              <span class="text-xs text-[#dd3333] font-medium">📝 编辑中</span>
+            <div class="mb-4">
+              <textarea
+                v-model="editForm.content"
+                rows="20"
+                class="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm font-mono focus:border-[#dd3333] focus:outline-none resize-y"
+                placeholder="支持 Markdown..."
+              ></textarea>
+              <p class="mt-1 text-xs text-gray-400">支持 Markdown · 字数 {{ editForm.content.length }}</p>
             </div>
-            <input
-              v-model="editForm.title"
-              type="text"
-              class="w-full text-2xl md:text-3xl font-bold text-gray-900 border border-gray-200 rounded-lg px-3 py-2 focus:border-[#dd3333] focus:outline-none"
-              placeholder="文档标题"
-            />
-          </header>
 
-          <div class="mb-4">
-            <textarea
-              v-model="editForm.content"
-              rows="20"
-              class="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm font-mono focus:border-[#dd3333] focus:outline-none resize-y"
-              placeholder="支持 Markdown..."
-            ></textarea>
-            <p class="mt-1 text-xs text-gray-400">支持 Markdown · 字数 {{ editForm.content.length }}</p>
-          </div>
+            <details class="mb-5">
+              <summary class="text-sm text-gray-500 cursor-pointer hover:text-gray-700">👁️ 预览效果</summary>
+              <div class="markdown-body mt-3 p-4 bg-gray-50 rounded-lg border border-gray-100" v-html="previewRendered"></div>
+            </details>
 
-          <details class="mb-5">
-            <summary class="text-sm text-gray-500 cursor-pointer hover:text-gray-700">👁️ 预览效果</summary>
-            <div class="markdown-body mt-3 p-4 bg-gray-50 rounded-lg border border-gray-100" v-html="previewRendered"></div>
-          </details>
+            <div class="flex items-center gap-3 pt-3 border-t border-gray-100">
+              <button @click="saveEdit" :disabled="saving" class="px-4 py-2 rounded-md text-sm bg-[#dd3333] text-white hover:bg-red-600 disabled:opacity-50 transition">
+                {{ saving ? '保存中...' : '💾 保存' }}
+              </button>
+              <button @click="cancelEdit" :disabled="saving" class="px-4 py-2 rounded-md text-sm bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-50 transition">取消</button>
+              <span v-if="saveError" class="text-xs text-red-500 ml-2">{{ saveError }}</span>
+            </div>
+          </article>
+        </template>
 
-          <div class="flex items-center gap-3 pt-3 border-t border-gray-100">
-            <button @click="saveEdit" :disabled="saving" class="px-4 py-2 rounded-md text-sm bg-[#dd3333] text-white hover:bg-red-600 disabled:opacity-50 transition">
-              {{ saving ? '保存中...' : '💾 保存' }}
-            </button>
-            <button @click="cancelEdit" :disabled="saving" class="px-4 py-2 rounded-md text-sm bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-50 transition">取消</button>
-            <span v-if="saveError" class="text-xs text-red-500 ml-2">{{ saveError }}</span>
-          </div>
-        </article>
-      </template>
-
-      <div v-if="!doc && !loading && error !== '这是私密文档，无权限访问'" class="card p-12 text-center">
-        <p class="text-4xl mb-2">📭</p>
-        <p class="text-gray-400 text-sm">{{ error || '文档不存在' }}</p>
-        <NuxtLink to="/docs" class="mt-3 inline-block text-[#dd3333] text-sm hover:underline">← 返回文档首页</NuxtLink>
+        <div v-if="!doc && !loading && error !== '这是私密文档，无权限访问'" class="card p-12 text-center">
+          <p class="text-4xl mb-2">📭</p>
+          <p class="text-gray-400 text-sm">{{ error || '文档不存在' }}</p>
+          <NuxtLink to="/docs" class="mt-3 inline-block text-[#dd3333] text-sm hover:underline">← 返回文档首页</NuxtLink>
+        </div>
       </div>
+
+      <!-- ========== 右侧 TOC 目录 ========== -->
+      <aside v-if="headings.length && !editMode" class="hidden md:block w-56 flex-shrink-0 ml-3">
+        <div class="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto">
+          <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-1">目录</h4>
+          <ul class="space-y-0.5">
+            <li v-for="h in headings" :key="h.id">
+              <a
+                :href="`#${h.id}`"
+                class="block py-1 pr-2 text-xs text-gray-500 hover:text-[#dd3333] border-l-2 border-transparent hover:border-[#dd3333] transition truncate"
+                :style="{ paddingLeft: (h.level - 1) * 12 + 'px' }"
+                :class="{ 'border-[#dd3333] text-[#dd3333] font-medium': activeHeading === h.id }"
+                @click.prevent="scrollToHeading(h.id)"
+              >{{ h.text }}</a>
+            </li>
+          </ul>
+        </div>
+      </aside>
     </div>
-
-    <!-- ========== 右侧 TOC 目录 ========== -->
-    <aside v-if="headings.length && !editMode" class="hidden md:block w-56 flex-shrink-0 ml-3">
-      <div class="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto">
-        <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-1">目录</h4>
-        <ul class="space-y-0.5">
-          <li v-for="h in headings" :key="h.id">
-            <a
-              :href="`#${h.id}`"
-              class="block py-1 pr-2 text-xs text-gray-500 hover:text-[#dd3333] border-l-2 border-transparent hover:border-[#dd3333] transition truncate"
-              :style="{ paddingLeft: (h.level - 1) * 12 + 'px' }"
-              :class="{ 'border-[#dd3333] text-[#dd3333] font-medium': activeHeading === h.id }"
-              @click.prevent="scrollToHeading(h.id)"
-            >{{ h.text }}</a>
-          </li>
-        </ul>
-      </div>
-    </aside>
   </div>
 </template>
 
 <script setup lang="ts">
-import { marked } from 'marked'
-import FileTree from '~/components/FileTree.vue'
+import { useMarkdown } from '~/composables/useMarkdown'
+const { render } = useMarkdown()
 
 const route = useRoute()
 const userStore = useUserStore()
 
 // ============ 状态 ============
-const tree = ref<any[]>([])
-const doc = ref<any>(null)   // 完整文档对象（包含 author, visibility, canEdit）
-const content = ref('')       // markdown 内容（给 marked 用）
+const doc = ref<any>(null)
+const content = ref('')
 const loading = ref(true)
 const error = ref('')
 const headings = ref<{ id: string; text: string; level: number }[]>([])
@@ -184,26 +174,12 @@ const saveError = ref('')
 
 const editForm = reactive({ title: '', content: '' })
 
-// ============ marked ============
+// ============ slugify ============
 const slugify = (text: string) => {
   let t = text.replace(/[`*_#]/g, '')
   t = t.replace(/[，。！？、「」『』（）【】《》〈〉""''：；—\u200B-\u200D\uFEFF]/g, '')
   return t.trim().replace(/\s+/g, '-').toLowerCase() || 'section'
 }
-
-marked.use({
-  gfm: true, breaks: true,
-  renderer: {
-    heading(token) {
-      const id = slugify(token.text)
-      return `<h${token.depth} id="${id}" class="scroll-mt-20">${token.text}</h${token.depth}>`
-    },
-    code(token) {
-      const langClass = token.lang ? ` class="language-${token.lang}"` : ''
-      return `<pre><code${langClass}>${token.text}</code></pre>`
-    },
-  },
-})
 
 // ============ 路径处理 ============
 const pathSegments = computed(() => {
@@ -212,19 +188,9 @@ const pathSegments = computed(() => {
   return arr.map(s => decodeURIComponent(s))
 })
 
-const currentPath = computed(() => {
-  const seg = pathSegments.value.join('/')
-  return seg || ''
-})
+const currentPath = computed(() => pathSegments.value.join('/') || '')
 
 // ============ 加载 ============
-async function loadTree() {
-  try {
-    const res = await useApi<any>('/api/docs/tree')
-    if (res.code === 200) tree.value = res.data.tree
-  } catch (e) { console.error('loadTree error:', e) }
-}
-
 async function loadContent() {
   userStore.init()
   loading.value = true
@@ -265,8 +231,8 @@ function extractHeadings(md: string) {
   headings.value = list
 }
 
-const rendered = computed(() => marked(content.value || ''))
-const previewRendered = computed(() => marked(editForm.content || ''))
+const rendered = computed(() => render(content.value || ''))
+const previewRendered = computed(() => render(editForm.content || ''))
 
 // ============ 编辑 ============
 function startEdit() {
@@ -351,7 +317,6 @@ function formatDate(d: string) { return d?.replace('T', ' ').slice(0, 16) || '' 
 
 // ============ 生命周期 ============
 onMounted(() => {
-  loadTree()
   loadContent()
   window.addEventListener('scroll', onScroll)
 })

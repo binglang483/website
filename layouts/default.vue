@@ -2,7 +2,7 @@
   <div class="min-h-screen flex flex-col">
     <!-- ========== 顶部导航栏（ACGSQ 毛玻璃风格） ========== -->
     <header class="sticky top-0 z-50 py-3 px-4">
-      <div class="max-w-7xl mx-auto">
+      <div class="max-w-[1600px] mx-auto">
         <div class="glass shadow-glass h-14 flex items-center gap-3 px-4">
           <!-- Logo -->
           <NuxtLink to="/" class="flex items-center gap-2 group">
@@ -15,8 +15,24 @@
             <NuxtLink to="/" class="nav-link" active-class="nav-link-active">🏠 首页</NuxtLink>
             <NuxtLink to="/docs" class="nav-link" active-class="nav-link-active">📖 文档</NuxtLink>
             <NuxtLink to="/notes" class="nav-link" active-class="nav-link-active">📓 笔记</NuxtLink>
-            <NuxtLink to="/about" class="nav-link" active-class="nav-link-active">💡 关于</NuxtLink>
-          </nav>
+            <NuxtLink to="/tools" class="nav-link" active-class="nav-link-active">🛠️ 工具</NuxtLink>
+            <NuxtLink to="/about" class="nav-link" active-class="nav-link-active">📘 {{ t('nav.about') }}</NuxtLink>
+<NuxtLink to="/settings" class="nav-link" active-class="nav-link-active">⚙️ {{ t('nav.settings') }}</NuxtLink>
+          
+<!-- theme + lang -->
+<div class="flex items-center gap-1 ml-auto">
+  <button @click="toggleTheme" title="Theme" class="p-2 rounded hover:bg-[#f4f1ea] transition theme-toggle">
+    <span v-if="settings.isWashi">🎨</span>
+    <span v-else-if="settings.isDark">🌙</span>
+    <span v-else>☀️</span>
+  </button>
+  <select v-model="settings.lang" @change="settings.setLang(settings.lang)" title="Lang" class="px-2 py-1 rounded text-xs border bg-white ml-1 cursor-pointer">
+    <option value="zh">🇨🇳 中</option>
+    <option value="en">🇺🇸 EN</option>
+    <option value="ja">🇯🇵 日</option>
+  </select>
+</div>
+</nav>
 
           <div class="flex-1"></div>
 
@@ -61,11 +77,11 @@
       </div>
     </header>
 
-    <!-- ========== 主体三栏布局 ========== -->
+    <!-- ========== 主体布局（按路由决定栏数） ========== -->
     <main class="flex-1 page-container">
-      <div class="flex gap-6">
-        <!-- 左侧边栏 -->
-        <aside class="hidden lg:block w-64 flex-shrink-0 sticky top-24 self-start max-h-[calc(100vh-7rem)] overflow-y-auto">
+      <div class="flex gap-6 max-w-[1600px] mx-auto">
+        <!-- 左侧：知识文档目录（仅 /docs 路由显示） -->
+        <aside v-if="showSidebar" class="hidden lg:block w-64 flex-shrink-0 sticky top-24 self-start max-h-[calc(100vh-7rem)] overflow-y-auto">
           <Sidebar />
         </aside>
 
@@ -74,8 +90,8 @@
           <slot />
         </div>
 
-        <!-- 右侧边栏 -->
-        <aside class="hidden xl:block w-72 flex-shrink-0 sticky top-24 self-start max-h-[calc(100vh-7rem)] overflow-y-auto">
+        <!-- 右侧：社区数据（首页或 /docs 路由显示） -->
+        <aside v-if="showRightPanel" class="hidden xl:block w-72 flex-shrink-0 sticky top-24 self-start max-h-[calc(100vh-7rem)] overflow-y-auto">
           <RightPanel />
         </aside>
       </div>
@@ -92,14 +108,33 @@
 </template>
 
 <script setup lang="ts">
+const route = useRoute()
 const userStore = useUserStore()
 const searchQuery = ref('')
+
+// 左侧知识文档目录：仅 /docs 路由显示
+const showSidebar = computed(() => route.path.startsWith('/docs'))
+
+// 右侧社区面板：首页 /docs 路由显示
+const showRightPanel = computed(() => {
+  return route.path === '/' || route.path.startsWith('/docs')
+})
 
 function doSearch() {
   if (searchQuery.value.trim()) {
     navigateTo(`/docs?q=${encodeURIComponent(searchQuery.value.trim())}`)
   }
 }
+
+import { useSettingsStore } from '~/stores/settings';
+import { useI18n } from '~/composables/useI18n';
+const settings = useSettingsStore();
+const { t } = useI18n();
+function toggleTheme() {
+  const cycle = { washi: "light", light: "dark", dark: "washi" };
+  settings.setTheme(cycle[settings.theme]);
+}
+onMounted(() => settings.applyTheme());
 </script>
 
 <style scoped>

@@ -1,130 +1,105 @@
 <template>
-  <section class="relative overflow-hidden rounded-lg shadow-card mb-6" style="height:340px;background:linear-gradient(135deg,#667eea 0%,#764ba2 50%,#f093fb 100%)">
-    <!-- 壁纸背景（两层做淡入淡出） -->
+  <section class="hero-washi relative overflow-hidden rounded-lg mb-6">
+    <div class="absolute inset-0" style="background:linear-gradient(135deg,#fce4ec 0%,#e8eaf6 50%,#e8f5e9 100%);z-index:1"></div>
+
     <div
-      v-for="(src, i) in wallpapers"
-      :key="src"
-      class="absolute inset-0 hero-bg"
-      :style="{
-        backgroundImage: `url('${src}')`,
-        opacity: currentIndex === i ? 1 : 0,
-        zIndex: currentIndex === i ? 1 : 0,
-        transition: 'opacity 1.2s ease-in-out'
-      }"
-    ></div>
-    <!-- 渐变兜底（图片加载前可见） -->
-    <div class="absolute inset-0" style="background:linear-gradient(135deg,rgba(102,126,234,0.3) 0%,rgba(118,75,162,0.3) 50%,rgba(240,147,251,0.3) 100%);z-index:2"></div>
-
-    <!-- 深色蒙版 -->
-    <div class="absolute inset-0 hero-overlay" style="z-index:5"></div>
-
-    <!-- 樱花飘落 -->
-    <div id="hero-sakura" class="absolute inset-0 overflow-hidden pointer-events-none" style="z-index:6"></div>
-
-    <!-- 内容 -->
-    <div class="relative h-full flex flex-col items-center justify-center text-white px-8" style="z-index:10">
-      <h1 class="text-3xl md:text-4xl font-bold mb-2 drop-shadow-lg">🌸 学びの庭</h1>
-      <p class="text-white/90 mb-5 drop-shadow">12大領域 · 全学科の知識を記録・共有する</p>
-
-      <!-- 中央搜索框 -->
-      <div class="glass shadow-glass w-full max-w-xl flex items-center h-12 px-2">
-        <input
-          v-model="query"
-          type="text"
-          placeholder="搜索 文档 / 笔记 ..."
-          class="flex-1 h-full px-3 rounded-lg text-sm text-gray-800 bg-transparent outline-none placeholder:text-gray-500"
-          @keyup.enter="doSearch"
-        />
-        <button
-          @click="doSearch"
-          class="h-10 px-5 rounded-lg text-white text-sm font-medium flex items-center gap-1"
-          style="background:#dd3333"
-        >
-          🔎 搜索
-        </button>
-      </div>
-
-      <!-- 快速入口 -->
-      <div class="flex flex-wrap justify-center gap-3 mt-5">
-        <NuxtLink to="/docs" class="h-9 px-4 rounded-lg bg-white/25 backdrop-blur border border-white/40 text-sm hover:bg-white/35 transition">📖 浏览文档</NuxtLink>
-        <NuxtLink to="/notes" class="h-9 px-4 rounded-lg bg-white/25 backdrop-blur border border-white/40 text-sm hover:bg-white/35 transition">📓 我的笔记</NuxtLink>
-        <NuxtLink v-if="!userStore.isLoggedIn" to="/register" class="h-9 px-4 rounded-lg text-white text-sm font-medium shadow" style="background:linear-gradient(135deg,#f472b6,#a855f7)">✨ 加入我们</NuxtLink>
-        <NuxtLink v-else to="/notes/new" class="h-9 px-4 rounded-lg text-white text-sm font-medium shadow" style="background:linear-gradient(135deg,#f472b6,#a855f7)">✍️ 写笔记</NuxtLink>
-      </div>
+      v-for="(src, i) in displayWalls"
+      :key="src + i"
+      class="absolute inset-0 flex items-center justify-center"
+      :style="{ opacity: currentIndex === i ? 1 : 0, zIndex: currentIndex === i ? 2 : 0, transition: 'opacity 1.5s ease-in-out' }"
+    >
+      <div class="hero-img" :style="{ backgroundImage: 'url(' + src + ')', opacity: settings.wallpapers.opacity ?? 0.45 }"></div>
     </div>
 
-    <!-- 壁纸指示器 -->
-    <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5" style="z-index:10">
-      <button
-        v-for="(_, i) in wallpapers"
-        :key="i"
-        @click="currentIndex = i"
-        class="h-1.5 rounded-full transition-all"
-        :class="currentIndex === i ? 'w-6 bg-white' : 'w-3 bg-white/40 hover:bg-white/60'"
-      ></button>
+    <div class="absolute inset-0" style="background:linear-gradient(180deg,rgba(250,248,245,0) 0%,rgba(250,248,245,0.55) 70%,rgba(250,248,245,0.95) 100%);z-index:3"></div>
+    <div class="absolute inset-0" style="background:linear-gradient(90deg,rgba(250,248,245,0.35) 0%,transparent 30%,transparent 70%,rgba(250,248,245,0.45) 100%);z-index:4"></div>
+    <div id="hero-sakura" class="absolute inset-0 overflow-hidden pointer-events-none" style="z-index:5"></div>
+
+    <div class="relative flex flex-col items-center justify-center px-8 py-20 md:py-24" style="min-height:680px;z-index:10">
+      <div class="text-center mb-5">
+        <h1 class="text-4xl md:text-5xl font-bold mb-3" style="color:#3a3a3a;letter-spacing:0.08em">{{ t('hero.title') }}</h1>
+        <p class="text-base text-gray-600 tracking-wide">{{ t('hero.sub') }}</p>
+      </div>
+      <div class="w-full max-w-xl flex items-center h-12 px-3 rounded-lg" style="background:rgba(255,255,255,0.88);backdrop-filter:blur(8px);border:1px solid rgba(0,0,0,0.08)">
+        <input v-model="query" type="text" :placeholder="t('hero.search')" class="flex-1 h-full px-3 rounded text-sm text-gray-800 bg-transparent outline-none placeholder:text-gray-400" @keyup.enter="doSearch" />
+        <button @click="doSearch" class="h-9 px-4 rounded text-white text-sm font-medium flex items-center gap-1" style="background:#c0392b">{{ t('hero.searchBtn') }}</button>
+      </div>
+      <div class="mt-4 flex gap-4 text-xs text-gray-500">
+        <span>{{ t('hero.stats1') }}</span><span>{{ t('hero.stats2') }}</span><span>{{ t('hero.stats3') }}</span><span>{{ t('hero.stats4') }}</span>
+      </div>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-const userStore = useUserStore()
-const route = useRoute()
-const query = ref((route.query.q as string) || '')
+import { useI18n } from '~/composables/useI18n'
+import { useSettingsStore } from '~/stores/settings'
 
-// 动漫壁纸列表（与 public/wallpapers 实际文件对应）
-const wallpapers = [
-  '/wallpapers/1-sakura.jpg',
-  '/wallpapers/2-sea-sunset.jpg',
-  '/wallpapers/3-cyberpunk.jpg',
-  '/wallpapers/4-sunset.jpg',
-  '/wallpapers/5-room.jpg',
-  '/wallpapers/6-neko.jpg',
-]
-
+const settings = useSettingsStore()
+const { t } = useI18n()
+const query = ref('')
+const walls = ref<string[]>([])
 const currentIndex = ref(0)
 
-// 自动轮换
-let timer: any
-onMounted(() => {
-  timer = setInterval(() => {
-    currentIndex.value = (currentIndex.value + 1) % wallpapers.length
-  }, 5000)
-  createSakura()
+// CSR 显示的壁纸
+const displayWalls = computed(() => {
+  if (settings.wallpapers.selected) return [settings.wallpapers.selected]
+  return walls.value
 })
-onUnmounted(() => {
-  clearInterval(timer)
-})
+
+// CSR fetch 壁纸（onMounted 执行）
+async function loadWalls() {
+  try {
+    const res = await $fetch<any>('/api/wallpapers')
+    if (res?.code === 200 && res.data?.length) walls.value = res.data
+  } catch {}
+}
+
+let timer: any = null
+function startRotate() {
+  if (timer) clearInterval(timer)
+  if (settings.wallpapers.autoPlay && walls.value.length > 0 && !settings.wallpapers.selected) {
+    timer = setInterval(() => {
+      if (walls.value.length > 0) currentIndex.value = (currentIndex.value + 1) % walls.value.length
+    }, settings.wallpapers.interval)
+  }
+}
+watch(() => settings.wallpapers, () => { startRotate() }, { deep: true })
 
 function doSearch() {
-  if (query.value.trim()) {
-    navigateTo(`/docs?q=${encodeURIComponent(query.value.trim())}`)
-  }
+  const q = query.value.trim()
+  navigateTo(q ? '/docs?q=' + encodeURIComponent(q) : '/docs')
 }
 
-function createSakura() {
-  const container = document.getElementById('hero-sakura')
-  if (!container) return
-  const petals = ['🌸', '🌺', '💮']
-  for (let i = 0; i < 8; i++) {
-    const p = document.createElement('div')
-    p.className = 'absolute pointer-events-none text-white/70'
-    p.textContent = petals[Math.floor(Math.random() * petals.length)]
-    p.style.left = Math.random() * 100 + '%'
-    p.style.top = Math.random() * 100 + '%'
-    p.style.fontSize = (12 + Math.random() * 10) + 'px'
-    p.style.animation = `hero-sakura-${i} ${6 + Math.random() * 6}s linear infinite`
-    p.style.animationDelay = Math.random() * 5 + 's'
-    // 注入 keyframes
-    const keyframes = document.createElement('style')
-    keyframes.textContent = `
-      @keyframes hero-sakura-${i} {
-        0% { transform: translate(0,0) rotate(0deg); opacity: 0; }
-        10% { opacity: 0.8; }
-        100% { transform: translate(${Math.random()*40-20}px, 350px) rotate(${Math.random()*360}deg); opacity: 0; }
-      }
-    `
-    document.head.appendChild(keyframes)
-    container.appendChild(p)
-  }
+function startSakura() {
+  const c = document.getElementById('hero-sakura')
+  if (!c) return
+  const emojis = ['🌸','🌺','🍃','🌿']
+  setInterval(() => {
+    if (!settings.animations) return
+    const el = document.createElement('div')
+    el.className = 'sakura-petal'
+    el.textContent = emojis[Math.floor(Math.random() * emojis.length)]
+    el.style.left = Math.random() * 100 + '%'
+    el.style.fontSize = (12 + Math.random() * 14) + 'px'
+    el.style.animationDuration = (6 + Math.random() * 6) + 's'
+    c.appendChild(el)
+    setTimeout(() => el.remove(), 12000)
+  }, 600)
 }
+
+onMounted(() => {
+  settings.applyTheme()
+  loadWalls().then(() => startRotate())
+  startSakura()
+})
 </script>
+
+<style scoped>
+.hero-washi { background: #faf8f5; }
+.hero-img {
+  width: 100%; height: 100%;
+  background-size: cover; background-position: center center;
+  background-repeat: no-repeat;
+}
+</style>

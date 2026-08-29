@@ -1,8 +1,9 @@
-/**
+﻿/**
  * GET /api/comments?type=document|note|article&id=123
  * 获取某篇内容的评论列表（扁平结构，前端按 parent_id 组装树）
  */
 import { getDb } from '~/server/utils/db'
+import { ok, badRequest } from '~/server/utils/response'
 
 const ALLOWED_TYPES = ['document', 'note', 'article']
 
@@ -12,7 +13,7 @@ export default defineEventHandler((event) => {
   const id = parseInt((query.id as string) || '')
 
   if (!ALLOWED_TYPES.includes(type) || !id) {
-    return { code: 400, message: '参数错误: 需要 type (document/note/article) 和 id', data: [] }
+    return badRequest('需要 type 和 id 参数')
   }
 
   const db = getDb()
@@ -28,5 +29,6 @@ export default defineEventHandler((event) => {
   `).all(type, id) as any[]
 
   // 扁平化返回，前端组装嵌套
-  return { code: 200, message: 'ok', data: rows }
+  return ok(rows)
 })
+

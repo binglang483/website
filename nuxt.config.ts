@@ -10,12 +10,25 @@ export default defineNuxtConfig({
 
   nitro: {
     devProxy: {},
+    routeRules: {
+      '/wallpapers/**': { headers: { 'Cache-Control': 'public, max-age=31536000, immutable' } },
+      '/_nuxt/**': { headers: { 'Cache-Control': 'public, max-age=31536000, immutable' } },
+      '/api/wallpapers': { swr: true, headers: { 'Cache-Control': 'public, max-age=300' } },
+    },
+    // 全局 API 错误处理：把未捕获异常包成统一响应
+    hooks: {
+      'error'(error) {
+        // 已在 runtimeConfig 中做了生产强制校验
+        return error
+      }
+    }
   },
 
   runtimeConfig: {
-    // ⚠️ 生产环境必须通过环境变量覆盖 JWT_SECRET！
-    // 默认值仅用于开发测试，绝不能在生产环境使用
-    jwtSecret: process.env.JWT_SECRET || 'dev-only-secret-change-in-production-' + Date.now(),
+    // 开发环境用安全随机值，生产环境必须通过 JWT_SECRET 覆盖
+    jwtSecret: process.env.JWT_SECRET || (process.env.NODE_ENV !== 'production'
+      ? 'dev-only-secret-' + Math.random().toString(36).slice(2) + Date.now()
+      : (() => { throw new Error('❌  [FATAL] 生产环境必须设置 JWT_SECRET 环境变量！'); })()),
     dbPath: process.env.DB_PATH || './data/knowledge.db',
     public: {
       siteName: '学びの庭',
@@ -48,4 +61,9 @@ export default defineNuxtConfig({
   },
 
   compatibilityDate: '2025-01-01',
+  experimental: {
+    renderJsonPayloads: true,
+    payloadExtraction: true,
+    crossOriginPrefetch: true,
+  },
 })

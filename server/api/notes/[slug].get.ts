@@ -1,9 +1,10 @@
 import { getDb } from '~/server/utils/db'
 import { getParam } from '~/server/utils/params'
+import { ok, badRequest, notFound } from '~/server/utils/response'
 
 export default defineEventHandler(async (event) => {
   const slug = getParam(event, 'slug', /\/api\/notes\/([^/?]+)/)
-  if (!slug) return { code: 400, message: '参数错误', data: null }
+  if (!slug) return badRequest('参数错误')
 
   const db = getDb()
   const note = db.prepare(`
@@ -13,8 +14,8 @@ export default defineEventHandler(async (event) => {
   `).get(slug)
 
   if (!note || (note as any).status !== 1) {
-    return { code: 404, message: '笔记不存在', data: null }
+    return notFound('笔记不存在')
   }
 
-  return { code: 200, message: 'ok', data: note }
+  return ok(note)
 })

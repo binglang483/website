@@ -4,22 +4,23 @@
 import { getDb } from '~/server/utils/db'
 import { getAuthUser } from '~/server/utils/jwt'
 import { getParam } from '~/server/utils/params'
+import { ok, badRequest, unauthorized, forbidden, notFound } from '~/server/utils/response'
 
 export default defineEventHandler(async (event) => {
   const auth = getAuthUser(event)
-  if (!auth) return { code: 401, message: '请先登录', data: null }
+  if (!auth) return unauthorized('请先登录')
 
   const idStr = getParam(event, 'id', /\/api\/docs\/(\d+)/)
   const id = parseInt(idStr || '')
-  if (!id) return { code: 400, message: '参数错误', data: null }
+  if (!id) return badRequest('参数错误')
 
   const db = getDb()
   const doc = db.prepare('SELECT * FROM documents WHERE id = ?').get(id) as any
-  if (!doc) return { code: 404, message: '文档不存在', data: null }
+  if (!doc) return notFound('文档不存在')
   if (doc.author_id !== auth.userId && auth.role !== 'admin') {
-    return { code: 403, message: '无权限操作', data: null }
+    return forbidden('无权限操作')
   }
 
   db.prepare('UPDATE documents SET status = 0 WHERE id = ?').run(id)
-  return { code: 200, message: '已删除', data: null }
+  return ok(null, '已删除')
 })

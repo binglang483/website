@@ -1,10 +1,11 @@
-/**
+﻿/**
  * POST /api/comments
  * 发表评论（登录用户）
  * Body: { type: 'document'|'note'|'article', targetId: number, content: string, parentId?: number }
  */
 import { getDb } from '~/server/utils/db'
 import { getAuthUser } from '~/server/utils/jwt'
+import { ok, badRequest, unauthorized } from '~/server/utils/response'
 
 const ALLOWED_TYPES = ['document', 'note', 'article']
 
@@ -17,7 +18,7 @@ const TABLE_MAP: Record<string, string> = {
 
 export default defineEventHandler(async (event) => {
   const auth = getAuthUser(event)
-  if (!auth) return { code: 401, message: '请先登录后再评论', data: null }
+  if (!auth) return unauthorized('请先登录后再评论')
 
   const body = await readBody(event) as {
     type: string
@@ -28,10 +29,10 @@ export default defineEventHandler(async (event) => {
 
   const type = body.type
   if (!ALLOWED_TYPES.includes(type)) {
-    return { code: 400, message: '参数错误: type 必须是 document / note / article', data: null }
+    return badRequest('type 必须是 document / note / article')
   }
   if (!body.targetId || !body.content?.trim()) {
-    return { code: 400, message: '评论内容不能为空', data: null }
+    return badRequest('评论内容不能为空')
   }
 
   const db = getDb()
@@ -46,7 +47,7 @@ export default defineEventHandler(async (event) => {
     const parent = db.prepare(
       'SELECT id FROM comments WHERE id = ? AND commentable_type = ? AND commentable_id = ? AND status = 1'
     ).get(body.parentId, type, body.targetId)
-    if (!parent) return { code: 400, message: '回复的评论不存在', data: null }
+    if (!parent) return badRequest('回复的评论不存在')
   }
 
   const result = db.prepare(`
@@ -67,5 +68,6 @@ export default defineEventHandler(async (event) => {
     WHERE c.id = ?
   `).get(result.lastInsertRowid)
 
-  return { code: 200, message: '评论成功 🌸', data: comment }
+  return ok(comment, '评论成功 🌸')
 })
+

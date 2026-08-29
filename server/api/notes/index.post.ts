@@ -1,17 +1,18 @@
 import { nanoid } from 'nanoid'
 import { getDb } from '~/server/utils/db'
 import { getAuthUser } from '~/server/utils/jwt'
+import { ok, badRequest, unauthorized } from '~/server/utils/response'
 
 export default defineEventHandler(async (event) => {
   const auth = getAuthUser(event)
-  if (!auth) return { code: 401, message: '请先登录', data: null }
+  if (!auth) return unauthorized('请先登录')
 
   const body = await readBody(event) as {
     title: string; content: string; domain: string; subcategory: string
   }
 
   if (!body.title?.trim() || !body.content?.trim() || !body.domain || !body.subcategory) {
-    return { code: 400, message: '请填写完整信息', data: null }
+    return badRequest('请填写完整信息')
   }
 
   const db = getDb()
@@ -21,5 +22,5 @@ export default defineEventHandler(async (event) => {
     VALUES (?, ?, ?, ?, ?, ?)
   `).run(slug, body.title.trim(), body.content, body.domain, body.subcategory, auth.userId)
 
-  return { code: 200, message: '笔记已保存 📝', data: { id: result.lastInsertRowid, slug } }
+  return ok({ id: result.lastInsertRowid, slug }, '笔记已保存 📝')
 })

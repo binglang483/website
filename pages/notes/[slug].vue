@@ -89,7 +89,8 @@
 </template>
 
 <script setup lang="ts">
-import { marked } from 'marked'
+import { useMarkdown } from '~/composables/useMarkdown'
+const { render } = useMarkdown()
 const route = useRoute()
 const userStore = useUserStore()
 const note = ref<any>(null)
@@ -105,8 +106,8 @@ const editForm = reactive({
 
 const canEdit = computed(() => userStore.isLoggedIn && (userStore.user?.id === note.value?.author_id || userStore.isAdmin))
 
-const rendered = computed(() => marked(note.value?.content || ''))
-const previewRendered = computed(() => marked(editForm.content || ''))
+const rendered = computed(() => render(note.value?.content || ''))
+const previewRendered = computed(() => render(editForm.content || ''))
 
 onMounted(async () => {
   userStore.init()

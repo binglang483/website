@@ -2,46 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ========== 全局基础样式 ========== */
+/* ========== 全局基础：米白纸色 + 和式配色 ========== */
 :root {
   --acg-red: #dd3333;
   --acg-blue: #2997f7;
   --acg-green: #19aa2c;
   --acg-orange: #ff6f06;
-  --sakura-gradient: linear-gradient(135deg, #f472b6 0%, #a855f7 100%);
+  --sakura: #fce4ec;       /* 樱 */
+  --matcha: #e8f5e9;       /* 抹茶 */
+  --sumac:  #f4e4bc;       /* 利休鼠 */
+  --indigo: #e8eaf6;       /* 蓝 */
+  --washi:  #faf8f5;       /* 和纸 */
+  --ink:    #3a3a3a;       /* 墨 */
+  --seal:   #c0392b;       /* 朱印 */
+  --sakura-gradient: linear-gradient(135deg, #fce4ec 0%, #e8eaf6 100%);
 }
 
 html, body {
-  background: #f2f4f7;
+  background: var(--washi);
   min-height: 100vh;
-  color: #374151;
+  color: var(--ink);
+  font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
 }
 
-/* ========== 滚动条美化 ========== */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
+/* ========== 滚动条：和式细 ========== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d4cfc7; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #b5afa6; }
 
-/* ========== 毛玻璃 ========== */
+/* ========== 毛玻璃导航 ========== */
 .glass {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: saturate(2) blur(15px);
-  -webkit-backdrop-filter: saturate(2) blur(15px);
+  background: rgba(250, 248, 245, 0.85);
+  backdrop-filter: saturate(1.5) blur(12px);
+  -webkit-backdrop-filter: saturate(1.5) blur(12px);
   border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.06);
 }
 .glass-dark {
-  background: rgba(27, 29, 31, 0.85);
+  background: rgba(58, 58, 58, 0.9);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
@@ -52,154 +51,164 @@ html, body {
     @apply inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm cursor-pointer select-none;
   }
   .btn-accent {
-    @apply btn text-white shadow-card-sm;
-    background: var(--acg-red);
+    @apply btn text-white;
+    background: var(--seal);
   }
   .btn-accent:hover {
-    background: #c02a2a;
-    box-shadow: 0 4px 15px rgba(221, 51, 51, 0.4);
+    background: #a93226;
   }
   .btn-primary {
-    @apply btn text-white shadow-card-sm;
+    @apply btn text-white;
     background: linear-gradient(135deg, #f472b6 0%, #a855f7 100%);
   }
   .btn-primary:hover {
-    box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
     transform: translateY(-1px);
   }
   .btn-ghost {
-    @apply btn bg-white border border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50;
+    @apply btn border border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-white;
+    background: transparent;
   }
   .btn-danger {
-    @apply btn bg-white border border-red-200 text-red-600 hover:bg-red-50;
+    @apply btn border border-red-200 text-red-600 hover:bg-red-50;
+    background: transparent;
   }
 
+  /* 和纸卡片 — 去掉强阴影，用细边 + 淡底色 */
   .card {
-    @apply bg-white rounded-lg shadow-card border border-gray-100;
+    background: #ffffff;
+    border: 1px solid #eceae4;
+    border-radius: 4px;
     transition: all 0.2s ease;
   }
   .card-hover:hover {
-    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-    transform: translateY(-2px);
+    border-color: #d4cfc7;
+    box-shadow: 0 2px 12px rgba(58,58,58,0.08);
+    transform: translateY(-1px);
   }
 
   .input {
-    @apply w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-white outline-none text-sm transition-all text-gray-800;
+    @apply w-full px-4 py-2.5 rounded border border-gray-200 bg-white outline-none text-sm transition-all text-gray-800;
   }
   .input:focus {
-    border-color: var(--acg-red);
-    box-shadow: 0 0 0 3px rgba(221, 51, 51, 0.1);
+    border-color: var(--seal);
+    box-shadow: 0 0 0 2px rgba(192, 57, 43, 0.12);
   }
 
   .tag {
-    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-medium;
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-sm text-xs font-medium;
   }
-  .tag-red {
-    @apply tag bg-red-50 text-red-600;
-  }
-  .tag-blue {
-    @apply tag bg-blue-50 text-blue-600;
-  }
-  .tag-green {
-    @apply tag bg-green-50 text-green-600;
-  }
-  .tag-pink {
-    @apply tag bg-pink-50 text-pink-600;
-  }
-  .tag-orange {
-    @apply tag bg-orange-50 text-orange-600;
-  }
-  /* 页面中直接使用的 tag 变体 */
-  .tag-sakura {
-    @apply tag bg-pink-50 text-[#dd3333];
-  }
-  .tag-anime {
-    @apply tag bg-purple-50 text-purple-600;
-  }
+  .tag-red { @apply tag bg-red-50 text-red-600; }
+  .tag-blue { @apply tag bg-blue-50 text-blue-600; }
+  .tag-green { @apply tag bg-green-50 text-green-600; }
+  .tag-pink { @apply tag bg-pink-50 text-pink-600; }
+  .tag-orange { @apply tag bg-orange-50 text-orange-600; }
+  .tag-sakura { @apply tag bg-[#fce4ec] text-[#c0392b]; }
+  .tag-anime { @apply tag bg-[#e8eaf6] text-indigo-600; }
 
   .gradient-text {
-    background: linear-gradient(135deg, #f472b6 0%, #a855f7 100%);
+    background: linear-gradient(135deg, #c0392b 0%, #8e44ad 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
 }
 
-/* ========== Markdown 文章渲染 ========== */
+/* ========== Markdown 正文：文库本风格 ========== */
 .markdown-body {
   @apply text-gray-800 leading-relaxed;
 }
-.markdown-body h1 { @apply text-2xl font-bold mt-6 mb-4 gradient-text; }
-.markdown-body h2 { @apply text-xl font-bold mt-5 mb-3 text-gray-800 border-l-4 border-[#dd3333] pl-3; }
+.markdown-body h1 { @apply text-2xl font-bold mt-6 mb-4; border-bottom: 2px solid #c0392b; padding-bottom: 0.5rem; }
+.markdown-body h2 { @apply text-xl font-bold mt-5 mb-3 text-gray-800; border-left: 3px solid #c0392b; padding-left: 0.75rem; }
 .markdown-body h3 { @apply text-lg font-semibold mt-4 mb-2 text-gray-700; }
 .markdown-body p  { @apply my-3; }
 .markdown-body ul { @apply list-disc pl-6 my-3; }
 .markdown-body ol { @apply list-decimal pl-6 my-3; }
 .markdown-body li { @apply my-1; }
 .markdown-body code:not(pre code) {
-  @apply px-1.5 py-0.5 rounded text-sm bg-red-50 text-red-600 font-mono;
+  @apply px-1.5 py-0.5 rounded-sm text-sm font-mono;
+  background: #f4f1ea;
+  color: #8e44ad;
 }
 .markdown-body pre {
-  @apply my-4 p-4 rounded-lg bg-gray-900 text-gray-100 overflow-x-auto text-sm;
+  @apply my-4 p-4 rounded text-sm overflow-x-auto;
+  background: #2c2c2c;
+  color: #e8e8e8;
 }
-.markdown-body pre code {
-  @apply bg-transparent p-0 text-gray-100;
-}
+.markdown-body pre code { @apply bg-transparent p-0; color: inherit; }
 .markdown-body blockquote {
-  @apply my-4 pl-4 border-l-4 border-[#dd3333] bg-red-50/40 py-2 pr-2 rounded-r text-gray-600;
+  @apply my-4 py-2 pr-2 pl-4 text-gray-600 rounded-r;
+  border-left: 3px solid #c0392b;
+  background: #fef9f9;
 }
-.markdown-body a {
-  @apply text-[#dd3333] hover:text-[#c02a2a] underline-offset-2;
-}
-.markdown-body img {
-  @apply max-w-full rounded-lg my-4 shadow-card-sm;
-}
-.markdown-body hr {
-  @apply my-6 border-gray-200;
-}
-.markdown-body table {
-  @apply w-full my-4 border-collapse;
-}
-.markdown-body th, .markdown-body td {
-  @apply border border-gray-200 px-3 py-2 text-sm;
-}
-.markdown-body th {
-  @apply bg-gray-50 text-gray-700 font-semibold;
-}
+.markdown-body a { @apply text-[#c0392b] hover:underline; }
+.markdown-body img { @apply max-w-full rounded my-4; }
+.markdown-body hr { @apply my-6; border-color: #eceae4; border-style: solid; border-width: 0 0 1px 0; }
+.markdown-body table { @apply w-full my-4 border-collapse; }
+.markdown-body th, .markdown-body td { @apply border border-[#eceae4] px-3 py-2 text-sm; }
+.markdown-body th { @apply font-semibold; background: #faf8f5; color: #3a3a3a; }
 
-/* ========== 樱花飘落（仅 Hero 区域） ========== */
+/* ========== 樱花飘落 ========== */
 .sakura-petal {
   position: fixed;
   pointer-events: none;
   font-size: 16px;
-  opacity: 0.6;
+  opacity: 0.5;
   animation: sakura-fall linear infinite;
   z-index: 40;
 }
 @keyframes sakura-fall {
-  0% {
-    transform: translateY(-10vh) rotate(0deg);
-    opacity: 0;
-  }
-  10% { opacity: 0.6; }
-  100% {
-    transform: translateY(110vh) rotate(720deg);
-    opacity: 0;
-  }
+  0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.5; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
 }
 
-/* ========== 布局容器 ========== */
+/* ========== 布局 ========== */
 .page-container {
-  @apply max-w-7xl mx-auto px-4 py-6;
+  @apply w-full px-4 py-6;
 }
 
-/* ========== Hero 壁纸轮换 ========== */
+/* ========== Hero ========== */
 .hero-bg {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  transition: opacity 1s ease-in-out;
+  transition: opacity 1.2s ease-in-out;
 }
 .hero-overlay {
-  background: linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.55) 100%);
+  background: linear-gradient(180deg, rgba(250,248,245,0.1) 0%, rgba(250,248,245,0.4) 100%);
 }
+
+/* ========== 和式分隔线 ========== */
+.washi-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #eceae4 20%, #eceae4 80%, transparent 100%);
+  margin: 1rem 0;
+}
+/* ========== 主题 CSS 变量 ========== */
+:root[data-theme="dark"] {
+  --body-bg: #1a1a2e; --body-fg: #e0e0e0; --card-bg: #252540;
+  --border: #3a3a5c; --ink: #f0f0f0;
+}
+:root[data-theme="light"] {
+  --body-bg: #ffffff; --body-fg: #1f2937; --card-bg: #ffffff;
+  --border: #e5e7eb; --ink: #111827;
+}
+:root[data-theme="washi"] {
+  --body-bg: #faf8f5; --body-fg: #3a3a3a; --card-bg: #ffffff;
+  --border: #eceae4; --ink: #3a3a3a;
+}
+html, body { background: var(--body-bg, #faf8f5); color: var(--body-fg, #3a3a3a); }
+.card { background: var(--card-bg, #fff); border-color: var(--border, #eceae4); }
+.docs-nav-card, .right-panel { background: var(--card-bg, #fff); border-color: var(--border, #eceae4); }
+.text-ink { color: var(--ink, #3a3a3a); }
+
+/* 深色下反色处理 */
+:root[data-theme="dark"] body { color: var(--body-fg); }
+:root[data-theme="dark"] .nav-card,
+:root[data-theme="dark"] .nav-icon,
+:root[data-theme="dark"] .nav-label,
+:root[data-theme="dark"] h1,
+:root[data-theme="dark"] h2,
+:root[data-theme="dark"] h3 { color: var(--ink); }
+:root[data-theme="dark"] .nav-card { background: var(--card-bg); border-color: var(--border); }
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #4a4a6c; }

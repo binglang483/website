@@ -1,15 +1,25 @@
+/**
+ * GET /api/categories?domain=安全
+ * 列出某领域下的所有子分类（加上计数）
+ */
 import { getDb } from '~/server/utils/db'
+import { ok } from '~/server/utils/response'
 
-// 获取所有分类（12大领域 + 子分类）
-export default defineEventHandler(async () => {
-  const db = getDb()
-  const categories = db.prepare('SELECT * FROM categories ORDER BY domain, sort_order').all() as any[]
-
-  const grouped: Record<string, any[]> = {}
-  for (const c of categories) {
-    if (!grouped[c.domain]) grouped[c.domain] = []
-    grouped[c.domain].push({ name: c.name, icon: c.icon, id: c.id })
+export default defineEventHandler((event) => {
+  const query = getQuery(event)
+  const domain = (query.domain as string) || ''
+  if (!domain) {
+    return { code: 400, message: '需要 domain 参数', data: [] }
   }
 
-  return { code: 200, message: 'ok', data: grouped }
+  const db = getDb()
+  const rows = db.prepare(`
+    SELECT c.id, c.name, c.icon, c.sort_order,
+      (SELECT COUNT(*) FROM notes n WHERE n.domain = c.domain AND n.subcategory = c.name) AS note_count
+    FROM categories c
+    WHERE c.domain = ?
+    ORDER BY c.sort_order ASC, c.id ASC
+  `).all(domain)
+
+  return ok(rows)
 })
