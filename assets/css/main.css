@@ -1,0 +1,198 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========== 全局基础样式 ========== */
+:root {
+  --acg-red: #dd3333;
+  --acg-blue: #2997f7;
+  --acg-green: #19aa2c;
+  --acg-orange: #ff6f06;
+  --sakura-gradient: linear-gradient(135deg, #f472b6 0%, #a855f7 100%);
+}
+
+html, body {
+  background: #f2f4f7;
+  min-height: 100vh;
+  color: #374151;
+}
+
+/* ========== 滚动条美化 ========== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* ========== 毛玻璃 ========== */
+.glass {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: saturate(2) blur(15px);
+  -webkit-backdrop-filter: saturate(2) blur(15px);
+  border-radius: 12px;
+}
+.glass-dark {
+  background: rgba(27, 29, 31, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ========== 组件基础 ========== */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm cursor-pointer select-none;
+  }
+  .btn-accent {
+    @apply btn text-white shadow-card-sm;
+    background: var(--acg-red);
+  }
+  .btn-accent:hover {
+    background: #c02a2a;
+    box-shadow: 0 4px 15px rgba(221, 51, 51, 0.4);
+  }
+  .btn-primary {
+    @apply btn text-white shadow-card-sm;
+    background: linear-gradient(135deg, #f472b6 0%, #a855f7 100%);
+  }
+  .btn-primary:hover {
+    box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+    transform: translateY(-1px);
+  }
+  .btn-ghost {
+    @apply btn bg-white border border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50;
+  }
+  .btn-danger {
+    @apply btn bg-white border border-red-200 text-red-600 hover:bg-red-50;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow-card border border-gray-100;
+    transition: all 0.2s ease;
+  }
+  .card-hover:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+  }
+
+  .input {
+    @apply w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-white outline-none text-sm transition-all text-gray-800;
+  }
+  .input:focus {
+    border-color: var(--acg-red);
+    box-shadow: 0 0 0 3px rgba(221, 51, 51, 0.1);
+  }
+
+  .tag {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-medium;
+  }
+  .tag-red {
+    @apply tag bg-red-50 text-red-600;
+  }
+  .tag-blue {
+    @apply tag bg-blue-50 text-blue-600;
+  }
+  .tag-green {
+    @apply tag bg-green-50 text-green-600;
+  }
+  .tag-pink {
+    @apply tag bg-pink-50 text-pink-600;
+  }
+  .tag-orange {
+    @apply tag bg-orange-50 text-orange-600;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #f472b6 0%, #a855f7 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+/* ========== Markdown 文章渲染 ========== */
+.markdown-body {
+  @apply text-gray-800 leading-relaxed;
+}
+.markdown-body h1 { @apply text-2xl font-bold mt-6 mb-4 gradient-text; }
+.markdown-body h2 { @apply text-xl font-bold mt-5 mb-3 text-gray-800 border-l-4 border-[#dd3333] pl-3; }
+.markdown-body h3 { @apply text-lg font-semibold mt-4 mb-2 text-gray-700; }
+.markdown-body p  { @apply my-3; }
+.markdown-body ul { @apply list-disc pl-6 my-3; }
+.markdown-body ol { @apply list-decimal pl-6 my-3; }
+.markdown-body li { @apply my-1; }
+.markdown-body code:not(pre code) {
+  @apply px-1.5 py-0.5 rounded text-sm bg-red-50 text-red-600 font-mono;
+}
+.markdown-body pre {
+  @apply my-4 p-4 rounded-lg bg-gray-900 text-gray-100 overflow-x-auto text-sm;
+}
+.markdown-body pre code {
+  @apply bg-transparent p-0 text-gray-100;
+}
+.markdown-body blockquote {
+  @apply my-4 pl-4 border-l-4 border-[#dd3333] bg-red-50/40 py-2 pr-2 rounded-r text-gray-600;
+}
+.markdown-body a {
+  @apply text-[#dd3333] hover:text-[#c02a2a] underline-offset-2;
+}
+.markdown-body img {
+  @apply max-w-full rounded-lg my-4 shadow-card-sm;
+}
+.markdown-body hr {
+  @apply my-6 border-gray-200;
+}
+.markdown-body table {
+  @apply w-full my-4 border-collapse;
+}
+.markdown-body th, .markdown-body td {
+  @apply border border-gray-200 px-3 py-2 text-sm;
+}
+.markdown-body th {
+  @apply bg-gray-50 text-gray-700 font-semibold;
+}
+
+/* ========== 樱花飘落（仅 Hero 区域） ========== */
+.sakura-petal {
+  position: fixed;
+  pointer-events: none;
+  font-size: 16px;
+  opacity: 0.6;
+  animation: sakura-fall linear infinite;
+  z-index: 40;
+}
+@keyframes sakura-fall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% { opacity: 0.6; }
+  100% {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* ========== 布局容器 ========== */
+.page-container {
+  @apply max-w-7xl mx-auto px-4 py-6;
+}
+
+/* ========== Hero 壁纸轮换 ========== */
+.hero-bg {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: opacity 1s ease-in-out;
+}
+.hero-overlay {
+  background: linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.55) 100%);
+}
